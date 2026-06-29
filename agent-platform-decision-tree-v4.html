@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic Factory — Microsoft AI Agent Platform Selector</title>
+<style>
+/* ── Microsoft Fluent Design System ── */
+:root{
+  /* Copilot Studio brand */
+  --cs:#7719AA;--cs-light:#F7F0FF;--cs-mid:#B57FDB;--cs-dark:#5B0E9C;--cs-hover:#6B1499;
+  /* Azure AI Foundry brand */
+  --af:#0078D4;--af-light:#EBF3FB;--af-mid:#69AFE5;--af-dark:#005A9E;--af-hover:#106EBE;
+  /* Hybrid / success */
+  --hy:#107C10;--hy-light:#F1FAF1;--hy-dark:#0A5E0A;
+  /* Warning */
+  --warn:#C50F1F;--warn-dark:#8E0A15;--warn-light:#FDF3F4;--warn-orange:#D83B01;
+  /* Neutral — Fluent grey ramp */
+  --n2:#F5F5F5;--n4:#E0E0E0;--n6:#C2C2C2;--n8:#9E9E9E;--n10:#757575;--n12:#424242;--n14:#242424;
+  /* Surfaces */
+  --bg:#F5F5F5;--card:#FFFFFF;--border:#E0E0E0;--border-strong:#C2C2C2;
+  /* Text */
+  --text:#242424;--text2:#424242;--muted:#616161;--faint:#9E9E9E;
+  /* Fluent shadows */
+  --shadow2:0 1px 2px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12);
+  --shadow4:0 2px 4px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12);
+  --shadow8:0 4px 8px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12);
+  --shadow16:0 8px 16px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12);
+  /* Fluent radius */
+  --r2:2px;--r4:4px;--r6:6px;--r8:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;font-size:14px}
+
+/* ── HEADER ── */
+.top-stripe{height:3px;background:linear-gradient(90deg,var(--cs) 0%,#5A67D8 40%,var(--af) 100%)}
+.header{background:var(--card);border-bottom:1px solid var(--border);padding:12px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.header-brand{display:flex;align-items:center;gap:10px}
+.ms-logo{display:flex;gap:2px}
+.ms-sq{width:8px;height:8px;border-radius:1px}
+.header-title-wrap h1{font-size:16px;font-weight:600;color:var(--text);line-height:1.2;letter-spacing:-.01em}
+.header-title-wrap p{font-size:12px;color:var(--muted);margin-top:1px}
+.header-products{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.product-badge{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:var(--r4);font-size:12px;font-weight:600;border:1px solid}
+.product-badge-icon{width:8px;height:8px;border-radius:50%}
+.pb-cs{background:var(--cs-light);color:var(--cs-dark);border-color:var(--cs-mid)}
+.pb-cs .product-badge-icon{background:var(--cs)}
+.pb-af{background:var(--af-light);color:var(--af-dark);border-color:var(--af-mid)}
+.pb-af .product-badge-icon{background:var(--af)}
+.vs-sep{font-size:11px;color:var(--faint);font-weight:600}
+
+/* ── PIVOT TABS ── */
+.pivot{background:var(--card);border-bottom:1px solid var(--border);padding:0 40px;display:flex;gap:0}
+.pivot-item{padding:10px 16px;font-size:13px;font-weight:400;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:color .1s,border-color .1s;user-select:none;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.pivot-item:hover{color:var(--text);background:#F5F5F5}
+.pivot-item.active{color:var(--cs);border-bottom-color:var(--cs);font-weight:600}
+
+/* ── LAYOUT ── */
+.page{max-width:100%;width:100%;margin:0;padding:28px 40px 64px;box-sizing:border-box}
+.panel{display:none}.panel.active{display:block}
+
+/* ── PROGRESS (Fluent) ── */
+.progress-section{margin-bottom:20px}
+.progress-track{height:4px;background:var(--n4);border-radius:2px;overflow:hidden;margin-bottom:6px}
+.progress-bar{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--cs),var(--af));transition:width .3s ease}
+.progress-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--faint);font-weight:500}
+
+/* ── BREADCRUMB ── */
+.breadcrumb{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:18px;min-height:0}
+.crumb{display:flex;align-items:center;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:var(--r4);padding:3px 8px 3px 7px;font-size:11px;cursor:pointer;color:var(--muted);transition:border-color .1s,color .1s;max-width:260px}
+.crumb:hover{border-color:var(--cs);color:var(--cs)}
+.crumb-q{opacity:.6;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.crumb-a{font-weight:600;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crumb-x{opacity:.35;margin-left:2px;font-size:12px}
+
+/* ── QUESTION CARD (Fluent) ── */
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r8);padding:28px;box-shadow:var(--shadow4);animation:fadeSlide .2s ease}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.q-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:4px}
+.q-icon-wrap{width:44px;height:44px;border-radius:var(--r6);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;background:var(--n2);border:1px solid var(--border)}
+.q-meta{flex:1}
+.q-eyebrow{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--faint);margin-bottom:4px}
+.q-title{font-size:19px;font-weight:600;color:var(--text);line-height:1.3;letter-spacing:-.01em}
+.q-hint{display:flex;gap:8px;align-items:flex-start;background:var(--n2);border-left:3px solid var(--border-strong);border-radius:0 var(--r4) var(--r4) 0;padding:10px 12px;margin:14px 0 22px;font-size:12.5px;color:var(--muted);line-height:1.6}
+.q-hint-ico{flex-shrink:0;margin-top:1px;opacity:.6}
+
+/* ── OPTIONS (Fluent selection) ── */
+.options{display:flex;flex-direction:column;gap:8px}
+.option{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border:1px solid var(--border);border-radius:var(--r6);cursor:pointer;background:var(--card);text-align:left;width:100%;transition:border-color .12s,box-shadow .12s,background .12s;position:relative}
+.option::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:var(--r2) 0 0 var(--r2);background:transparent;transition:background .12s}
+.option:hover{border-color:var(--cs);box-shadow:var(--shadow4);background:#FAFAFA}
+.option:hover::before{background:var(--cs)}
+.option:active{background:var(--cs-light)}
+.opt-num{width:26px;height:26px;border-radius:50%;background:var(--n2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--muted);flex-shrink:0;transition:background .12s,color .12s,border-color .12s;margin-top:2px}
+.option:hover .opt-num{background:var(--cs);color:#fff;border-color:var(--cs)}
+.opt-content{flex:1}
+.opt-label{font-size:14px;font-weight:500;color:var(--text);line-height:1.45}
+.opt-sub{font-size:12px;color:var(--faint);margin-top:3px;line-height:1.4}
+.opt-signal{display:inline-flex;align-items:center;gap:4px;margin-top:7px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:var(--r2);background:var(--n2)}
+
+/* ── RESULT CARD (Fluent — white + colored border) ── */
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r8);padding:28px;box-shadow:var(--shadow8);animation:fadeSlide .2s ease;border-left:5px solid}
+.res-cs{border-left-color:var(--cs)}
+.res-af{border-left-color:var(--af)}
+.res-hy{border-left-color:var(--hy)}
+.res-warn{border-left-color:var(--warn-orange)}
+.result-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+.result-icon-ring{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;border:2px solid}
+.rir-cs{background:var(--cs-light);border-color:var(--cs-mid)}
+.rir-af{background:var(--af-light);border-color:var(--af-mid)}
+.rir-hy{background:var(--hy-light);border-color:#81D481}
+.rir-warn{background:var(--warn-light);border-color:#F4B8BB}
+.result-platform{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;margin-bottom:3px}
+.rp-cs{color:var(--cs)}.rp-af{color:var(--af-dark)}.rp-hy{color:var(--hy-dark)}.rp-warn{color:var(--warn-orange)}
+.result-name{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-.02em;line-height:1.2}
+.result-subtitle{font-size:13.5px;color:var(--muted);margin-top:5px;line-height:1.55;max-width:100%}
+.divider{height:1px;background:var(--border);margin:18px 0}
+.reasons-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--faint);margin-bottom:10px}
+.reason{display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;font-size:13.5px;color:var(--text2);line-height:1.5}
+.r-dot{width:6px;height:6px;border-radius:50%;margin-top:7px;flex-shrink:0}
+.rd-cs{background:var(--cs)}.rd-af{background:var(--af)}.rd-hy{background:var(--hy)}.rd-warn{background:var(--warn-orange)}
+.caveat{background:var(--n2);border-radius:var(--r4);border:1px solid var(--border);padding:12px 14px;font-size:12.5px;color:var(--muted);line-height:1.65;margin:16px 0 20px}
+.caveat strong{color:var(--text)}
+.result-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+/* ── FLUENT BUTTONS ── */
+.btn{padding:7px 16px;border-radius:var(--r4);font-size:13px;font-weight:600;cursor:pointer;transition:background .1s,border-color .1s,box-shadow .1s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-family:inherit;letter-spacing:.01em}
+.btn-primary-cs{background:var(--cs);color:#fff;border:1px solid var(--cs)}
+.btn-primary-cs:hover{background:var(--cs-hover);border-color:var(--cs-hover);box-shadow:var(--shadow4)}
+.btn-primary-af{background:var(--af);color:#fff;border:1px solid var(--af)}
+.btn-primary-af:hover{background:var(--af-hover);border-color:var(--af-hover);box-shadow:var(--shadow4)}
+.btn-outline{background:var(--card);color:var(--text);border:1px solid var(--border-strong)}
+.btn-outline:hover{background:var(--n2);border-color:var(--n8);box-shadow:var(--shadow2)}
+.btn-subtle-cs{background:var(--cs-light);color:var(--cs-dark);border:1px solid var(--cs-mid)}
+.btn-subtle-cs:hover{background:#EEE0FA}
+.btn-subtle-af{background:var(--af-light);color:var(--af-dark);border:1px solid var(--af-mid)}
+.btn-subtle-af:hover{background:#DDE9F5}
+
+/* ── ANSWERS TRAIL ── */
+.answers-trail{margin-top:18px;background:var(--card);border:1px solid var(--border);border-radius:var(--r8);overflow:hidden;box-shadow:var(--shadow2)}
+.answers-trail-hdr{padding:10px 16px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--faint);background:var(--n2);border-bottom:1px solid var(--border)}
+.ans-row{display:flex;align-items:flex-start;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px}
+.ans-row:last-child{border-bottom:none}
+.ans-q{color:var(--muted);font-size:11px;font-weight:600;flex:0 0 150px;padding-top:1px;line-height:1.4}
+.ans-a{color:var(--text);font-weight:500;flex:1;line-height:1.45}
+
+/* ── OVERVIEW TAB ── */
+.sec-hdr{font-size:14px;font-weight:700;color:var(--text);margin:24px 0 10px;display:flex;align-items:center;gap:8px;letter-spacing:-.01em}
+.sec-hdr:first-child{margin-top:0}
+.signal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px}
+@media(max-width:620px){.signal-grid{grid-template-columns:1fr}}
+.sig-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r8);padding:16px;box-shadow:var(--shadow2)}
+.sig-card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.sig-item{display:flex;gap:7px;font-size:12.5px;line-height:1.45;color:var(--text2);margin-bottom:6px;align-items:flex-start}
+.sig-dot{width:5px;height:5px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r8);box-shadow:var(--shadow2)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead th{background:var(--n2);padding:9px 13px;text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);white-space:nowrap;border-bottom:1px solid var(--border)}
+thead th.th-cs{color:var(--cs-dark)}thead th.th-af{color:var(--af-dark)}thead th.th-sig{color:var(--warn-orange)}
+tbody td{padding:10px 13px;border-top:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--text2)}
+tbody tr:nth-child(even) td{background:#FAFAFA}
+tbody tr:hover td{background:var(--cs-light)!important}
+tbody td:first-child{font-weight:700;font-size:11px;color:var(--muted);white-space:nowrap;background:var(--n2)!important}
+tbody tr:hover td:first-child{background:var(--cs-light)!important}
+.sig-pill{display:inline-block;padding:2px 7px;border-radius:var(--r2);font-size:10px;font-weight:700;white-space:nowrap}
+.sp-hard{background:#FFF4CE;color:#7A4F00;border:1px solid #FFD966}
+.sp-strong{background:var(--af-light);color:var(--af-dark);border:1px solid var(--af-mid)}
+.sp-mod{background:var(--n2);color:var(--muted);border:1px solid var(--border)}
+.sp-trade{background:var(--hy-light);color:var(--hy-dark);border:1px solid #81D481}
+
+/* ── DIAGRAM TAB ── */
+.diagram-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r8);padding:24px;overflow-x:auto;box-shadow:var(--shadow2)}
+.diagram-wrap svg{min-width:980px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:580px){.page{padding:16px 12px 48px}.header{padding:12px 16px}.pivot{padding:0 16px}.q-card,.result-card{padding:18px}.q-title{font-size:16px}.result-name{font-size:20px}.ans-q{flex:0 0 100px}}
+
+/* ── SIGNAL TRACKER ── */
+#tracker{background:var(--card);border:1px solid var(--border);border-radius:var(--r6);
+  padding:14px 16px;margin-bottom:14px;display:none;animation:fadeSlide .25s ease}
+#tracker.vis{display:block}
+.trk-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.trk-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--faint)}
+#trk-lean{font-size:11px;font-weight:600;padding:2px 9px;border-radius:var(--r2);
+  background:var(--n2);color:var(--text2);transition:background .35s,color .35s}
+#trk-lean.lcs{background:var(--cs-light);color:var(--cs-dark)}
+#trk-lean.laf{background:var(--af-light);color:var(--af-dark)}
+#trk-lean.lhy{background:var(--hy-light);color:var(--hy-dark)}
+.tug-wrap{position:relative;height:18px;background:var(--n4);border-radius:9px;overflow:hidden}
+#tug-cs{position:absolute;left:0;top:0;bottom:0;background:var(--cs);border-radius:9px 0 0 9px;
+  width:0%;transition:width .45s cubic-bezier(.4,0,.2,1)}
+#tug-af{position:absolute;right:0;top:0;bottom:0;background:var(--af);border-radius:0 9px 9px 0;
+  width:0%;transition:width .45s cubic-bezier(.4,0,.2,1)}
+#tug-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;
+  background:#fff;border:2px solid var(--n6);border-radius:50%;left:50%;
+  transition:left .45s cubic-bezier(.4,0,.2,1);z-index:2;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tug-ends{display:flex;justify-content:space-between;font-size:10px;font-weight:600;margin-top:5px}
+.tug-cs-lbl{color:var(--cs)}.tug-af-lbl{color:var(--af)}
+
+/* ── SERVICE BADGES ── */
+.svc-section{margin:16px 0 0}
+.svc-hdr{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;
+  color:var(--faint);margin-bottom:8px}
+.svc-badges{display:flex;flex-wrap:wrap;gap:6px}
+.svc-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:var(--r4);
+  font-size:11px;font-weight:600;border:1px solid;white-space:nowrap}
+.svc-cs{background:var(--cs-light);color:var(--cs-dark);border-color:var(--cs-mid)}
+.svc-af{background:var(--af-light);color:var(--af-dark);border-color:var(--af-mid)}
+.svc-sh{background:#F0FFF0;color:#0A5E0A;border-color:#81D481}
+.svc-nt{background:var(--n2);color:var(--n12);border-color:var(--n4)}
+.lic-row{display:flex;align-items:flex-start;gap:6px;margin-top:8px;font-size:11px;color:var(--muted);
+  background:var(--n2);border-radius:var(--r4);padding:7px 10px;line-height:1.5}
+.lic-ico{opacity:.5;flex-shrink:0}
+
+/* ── META CHIPS (complexity + timeline) ── */
+.meta-chips{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.meta-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;
+  border-radius:var(--r4);font-size:11px;font-weight:600;background:var(--n2);
+  border:1px solid var(--border);color:var(--text2)}
+.mc-icon{opacity:.65}
+
+/* ── COPY BUTTON ── */
+.copy-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;
+  border:1px solid var(--border);border-radius:var(--r4);background:var(--card);
+  font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;
+  transition:border-color .1s,color .1s}
+.copy-btn:hover{border-color:var(--cs);color:var(--cs)}
+.copy-btn.copied{border-color:var(--hy);color:var(--hy)}
+
+/* ── AGENT TYPE BADGE (on option) ── */
+.type-badge{display:inline-block;margin-top:6px;font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.6px;padding:2px 6px;border-radius:var(--r2);
+  background:var(--n2);color:var(--faint)}
+
+/* ── HEADER PULSE when leaning ── */
+@keyframes pulseCS{0%,100%{box-shadow:0 0 0 0 rgba(119,25,170,.35)}50%{box-shadow:0 0 0 5px rgba(119,25,170,0)}}
+@keyframes pulseAF{0%,100%{box-shadow:0 0 0 0 rgba(0,120,212,.35)}50%{box-shadow:0 0 0 5px rgba(0,120,212,0)}}
+.pb-cs.pulse{animation:pulseCS 1.4s ease-in-out 2}
+.pb-af.pulse{animation:pulseAF 1.4s ease-in-out 2}
+
+
+/* ── PLATFORM OVERVIEW TABLE ── */
+.platform-overview{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:8px}
+.platform-overview th{padding:10px 14px;font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.7px;border-bottom:2px solid var(--border)}
+.platform-overview th.th-cs{background:var(--cs-light);color:var(--cs-dark);border-bottom-color:var(--cs-mid)}
+.platform-overview th.th-af{background:var(--af-light);color:var(--af-dark);border-bottom-color:var(--af-mid)}
+.platform-overview th.th-dim{background:var(--n2);color:var(--muted);width:160px}
+.platform-overview td{padding:9px 14px;vertical-align:top;border-bottom:1px solid var(--n4);line-height:1.5}
+.platform-overview td.dim-cell{font-size:11px;font-weight:700;color:var(--muted);background:var(--n2);
+  text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.platform-overview tr:last-child td{border-bottom:none}
+.platform-overview tr:hover td{background:#FAFAFA}
+.platform-overview tr:hover td.dim-cell{background:var(--n4)}
+
+/* ── LAYER MAP TABLE ── */
+.layer-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:8px}
+.layer-table th{padding:9px 14px;font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.7px;background:var(--n2);color:var(--muted);border-bottom:2px solid var(--border)}
+.layer-table td{padding:9px 14px;vertical-align:middle;border-bottom:1px solid var(--n4)}
+.layer-table tr:last-child td{border-bottom:none}
+.layer-lbl{display:inline-flex;align-items:center;gap:6px;font-weight:500}
+.lyr-cs{color:var(--cs);font-weight:600}
+.lyr-af{color:var(--af);font-weight:600}
+.lyr-sh{color:var(--hy-dark);font-weight:600}
+.lyr-m365{color:#C50F1F;font-weight:600}
+
+</style>
+</head>
+<body>
+<div class="top-stripe"></div>
+<header class="header">
+  <div class="header-brand">
+    <div class="ms-logo">
+      <div class="ms-sq" style="background:#F25022"></div><div class="ms-sq" style="background:#7FBA00"></div>
+      <div class="ms-sq" style="background:#00A4EF;margin-top:2px"></div><div class="ms-sq" style="background:#FFB900;margin-top:2px"></div>
+    </div>
+    <div style="width:1px;height:24px;background:var(--border);margin:0 8px"></div>
+    <div class="header-title-wrap">
+      <h1>Agentic Factory <span style="font-weight:300;color:var(--muted);font-size:13px">· Agent Platform Selector</span></h1>
+      <p>Qualify · Design · Recommend · Export &nbsp;—&nbsp; Microsoft AI Agent Stack</p>
+    </div>
+  </div>
+  <div class="header-products">
+    <div class="product-badge pb-cs"><div class="product-badge-icon"></div>Copilot Studio</div>
+    <span class="vs-sep">vs</span>
+    <div class="product-badge pb-af"><div class="product-badge-icon"></div>Azure AI Foundry</div>
+  </div>
+</header>
+
+<nav class="pivot">
+  <div class="pivot-item active" data-tab="guide" onclick="switchTab('guide')">
+    <span>🗺️</span> Step-by-Step Guide
+  </div>
+  <div class="pivot-item" data-tab="overview" onclick="switchTab('overview')">
+    <span>📋</span> Full Comparison
+  </div>
+  <div class="pivot-item" data-tab="diagram" onclick="switchTab('diagram')">
+    <span>🌳</span> Decision Diagram
+  </div>
+  <div class="pivot-item" data-tab="quick" onclick="switchTab('quick')">
+    <span>⚡</span> Quick Qualify
+  </div>
+</nav>
+
+<main class="page">
+  <!-- GUIDE -->
+  <div id="panel-guide" class="panel active">
+    <div class="progress-section">
+      <div class="progress-track"><div class="progress-bar" id="prog-bar" style="width:0%"></div></div>
+      <div class="progress-meta"><span id="prog-label">Let's find the right platform</span><span id="prog-pct"></span></div>
+    </div>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div id="tracker">
+      <div class="trk-head">
+        <span class="trk-lbl">⚡ Signal Tracker</span>
+        <span id="trk-lean">Evaluating…</span>
+      </div>
+      <div class="tug-wrap">
+        <div id="tug-cs"></div>
+        <div id="tug-af"></div>
+        <div id="tug-dot"></div>
+      </div>
+      <div class="tug-ends">
+        <span class="tug-cs-lbl">🟣 Copilot Studio</span>
+        <span class="tug-af-lbl">Azure AI Foundry 🔵</span>
+      </div>
+    </div>
+    <div id="q-mount"></div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div id="panel-overview" class="panel">
+    
+    <div class="sec-hdr">🔭 Platform Overview — Side-by-Side</div>
+    <div class="tbl-wrap" style="margin-bottom:28px;width:100%">
+      <table id="platform-overview-tbl" class="platform-overview">
+        <thead>
+          <tr>
+            <th class="th-dim">Dimension</th>
+            <th class="th-cs">🟣 Copilot Studio Agents</th>
+            <th class="th-af">🔵 Azure AI Foundry Agents</th>
+          </tr>
+        </thead>
+        <tbody id="overview-body"></tbody>
+      </table>
+    </div>
+    <div class="sec-hdr">🏗️ Architecture Layer Map</div>
+    <div class="tbl-wrap" style="margin-bottom:28px;width:100%">
+      <table class="layer-table">
+        <thead><tr><th>Architecture Layer</th><th>Recommended Product / Stack</th></tr></thead>
+        <tbody id="layer-body"></tbody>
+      </table>
+    </div>
+    <div class="sec-hdr">⚡ Quick Signal Reference</div>
+    <div class="signal-grid" id="sig-grid"></div>
+    <div class="sec-hdr">📊 Full Decision Table</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Factor</th><th class="th-cs">Choose Copilot Studio when…</th><th class="th-af">Choose Azure AI Foundry when…</th><th class="th-sig">Signal</th></tr></thead>
+        <tbody id="tbl-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- DIAGRAM -->
+  <div id="panel-diagram" class="panel">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Decision phases and exit points. Use the Step-by-Step Guide to walk through each branch interactively.</p>
+    <div class="diagram-wrap"><svg id="diag-svg" viewBox="0 0 1060 860" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg"></svg></div>
+    <div style="display:flex;gap:20px;justify-content:center;margin-top:12px;font-size:12px;color:var(--muted)">
+      <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:var(--cs);display:inline-block"></span>Copilot Studio</span>
+      <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:var(--af);display:inline-block"></span>Azure AI Foundry</span>
+      <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:var(--hy);display:inline-block"></span>Hybrid</span>
+    </div>
+  </div>
+
+  <!-- QUICK QUALIFY -->
+  <div id="panel-quick" class="panel">
+    <div style="margin-bottom:20px">
+      <div class="sec-hdr" style="margin-bottom:4px">⚡ Quick Qualify — Three Decisive Questions</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Answer just the three most decisive qualification signals and get an instant directional answer. Use the Step-by-Step Guide for full qualification.</p>
+      <div id="qq-cards" style="display:flex;flex-direction:column;gap:14px"></div>
+      <div id="qq-result" style="margin-top:20px"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const TREE={
+  q_ip:{id:'q_ip',icon:'⚖️',step:'Decision 1 of 9 · IP Ownership',
+    question:'Who will own the intellectual property of this agent?',
+    context:'The single most decisive factor. If the customer must own all code, prompts, data, model artifacts, and conversation history, only Azure AI Foundry — deployed in the customer\'s Azure tenant — provides full IP control and portability.',
+    opts:[
+      {label:'Microsoft-managed platform (SaaS) — standard platform IP terms apply',
+       sub:'Microsoft retains service platform IP; customer owns their data and configurations',
+       signal:'Continue evaluating →',sc:'var(--muted)',next:'q_special'},
+      {label:'Customer / organization must own all IP — code, prompts, model artifacts, conversation history, and agent logic',
+       sub:'Full IP control, data sovereignty, and commercial portability required by policy or commercial terms',
+       signal:'★ Strongest signal → Azure AI Foundry',sc:'var(--af)',next:'r_ip'}
+    ]},
+  q_special:{id:'q_special',icon:'🏢',step:'Decision 2 of 9 · Enterprise Requirements',
+    question:'Do any of these enterprise or compliance requirements apply?',
+    context:'Each item below is independently a hard gate. They are architectural, regulatory, or operational requirements that determine platform fit — Foundry is the right match when any one applies.',
+    opts:[
+      {label:'None of these apply to my project',
+       sub:'Standard cloud SaaS requirements are sufficient',
+       signal:'Continue evaluating →',sc:'var(--muted)',next:'q_framework'},
+      {label:'One or more apply: Core42 / Compass model integration  ·  Custom content safety + guardrails  ·  Private APIs or MCP servers behind a firewall (Studio uses IP ranges, not fixed IPs — requires firewall changes that many enterprise security teams reject)  ·  Custom agent policy enforcement at AI Gateway or infrastructure level (beyond Studio\'s built-in policies)',
+       sub:'Any single one of these is a hard gate — Azure AI Foundry is the right platform fit',
+       signal:'Hard gate → Azure AI Foundry',sc:'var(--af)',next:'r_enterprise'}
+    ]},
+  q_framework:{id:'q_framework',icon:'🧩',step:'Decision 3 of 11 · Existing Agent Framework',
+    question:'Is your team already building with an agent framework or SDK?',
+    context:'If engineers already have code in LangGraph, AutoGen, Semantic Kernel, CrewAI, or similar frameworks, Azure AI Foundry Hosted Agents is the natural host — it supports those runtimes natively. Migrating to Copilot Studio would mean abandoning working code.',
+    opts:[
+      {label:'No existing framework — starting fresh or using a graphical builder',
+       sub:'No framework investment to protect; builder profile will drive the decision',
+       signal:'Continue evaluating →',sc:'var(--muted)',next:'q_type'},
+      {label:'Yes — LangGraph, LangChain, Microsoft Agent Framework, AutoGen, CrewAI, AGNO, Semantic Kernel, Pydantic AI, OpenAI Agents SDK, or similar',
+       sub:'Existing framework code runs natively on Azure AI Foundry Hosted Agents — no rewrite required',
+       signal:'★ Strong signal → Azure AI Foundry Hosted Agents',sc:'var(--af)',next:'q_type'}
+    ]},
+  q_type:{id:'q_type',icon:'🤖',step:'Decision 3 of 10 · Agent Type',
+    question:'What is the primary type of agent you are building?',
+    context:'Agent type is one of the strongest early routing signals. Knowledge and conversational agents are Copilot Studio\'s design sweet spot. Autonomous, multi-agent, and research agents almost always need Foundry\'s engineering model.',
+    opts:[
+      {label:'Knowledge Assistant or Employee Copilot',
+       sub:'Q&A over enterprise knowledge, M365-integrated, daily task support, summarisation',
+       signal:'Signals: Copilot Studio',sc:'var(--cs)',next:'q_builder'},
+      {label:'Customer Support or Process Automation Agent',
+       sub:'Handles tickets or guided workflows, integrates with CRM / ITSM systems',
+       signal:'Evaluate further →',sc:'var(--muted)',next:'q_builder'},
+      {label:'Autonomous Agent, Multi-Agent Workflow, or Research Agent',
+       sub:'Chains of agents, long-running tasks, parallel execution, ambient processes',
+       signal:'Strong signal → Azure AI Foundry',sc:'var(--af)',next:'q_builder'}
+    ]},
+  q_builder:{id:'q_builder',icon:'👥',step:'Decision 3 of 9 · Builder Profile',
+    question:'Who will primarily build and maintain this agent?',
+    context:'The ownership model affects long-term maintainability more than any individual feature list. Who owns the agent on day 90 matters as much as who builds it on day 1.',
+    opts:[
+      {label:'Business users, Power Platform makers, or citizen developers',sub:'Graphical builder — visual, maker-friendly ownership model',signal:'',sc:'',next:'q_surface'},
+      {label:'Professional developers, AI / data engineers, or platform teams',sub:'Code-first, infrastructure-owned',signal:'',sc:'',next:'q_gov'},
+      {label:'Mixed — both citizen devs and professional developers',sub:'Shared ownership model',signal:'',sc:'',next:'q_gov'}
+    ]},
+  q_surface:{id:'q_surface',icon:'🖥️',step:'Decision 4 of 9 · User Surface',
+    question:'Where will end users primarily interact with the agent?',
+    context:'Copilot Studio is purpose-built for M365/Teams/SharePoint surfaces. Foundry fits when the target is a custom application, public API, or non-Microsoft channel.',
+    opts:[
+      {label:'Microsoft Teams, M365 Copilot, SharePoint, Power Apps, or standard web chat',sub:'Within the Microsoft 365 / Power Platform ecosystem',signal:'Signals: Copilot Studio',sc:'var(--cs)',next:'q_data_s'},
+      {label:'Custom application, backend service, API, or multi-channel enterprise product',sub:'Outside or alongside the Microsoft 365 surface',signal:'Signals: Foundry',sc:'var(--af)',next:'q_gov'}
+    ]},
+  q_gov:{id:'q_gov',icon:'🔒',step:'Decision 4 of 9 · Governance & Security',
+    question:'What are your security, networking, and compliance requirements?',
+    context:'Networking, compliance, and data residency controls are architectural requirements that determine platform fit — either the platform meets the requirement or it doesn\'t.',
+    opts:[
+      {label:'SaaS governance and standard Power Platform policies are sufficient',sub:'No private networking or custom identity requirements',signal:'Continue evaluating',sc:'var(--muted)',next:'q_data_a'},
+      {label:'Need private networking, Azure RBAC, Key Vault, managed identity, network isolation, or Azure landing zone',sub:'Regulated workload — finance, healthcare, government, or enterprise infosec policy',signal:'Hard gate → Azure AI Foundry',sc:'var(--af)',next:'r_gov'}
+    ]},
+  q_data_s:{id:'q_data_s',icon:'🗄️',step:'Decision 5 of 9 · Data Sources & RAG',
+    question:'What are your primary data and knowledge sources?',
+    context:'Data complexity and the need for a custom RAG pipeline are the strongest architectural routing signals between the two platforms.',
+    opts:[
+      {label:'M365, SharePoint, Dataverse, websites, or standard connectors — no custom retrieval pipeline needed',sub:'Standard M365 data estate with built-in knowledge grounding',signal:'Signals: Copilot Studio',sc:'var(--cs)',next:'q_caps_s'},
+      {label:'Custom RAG pipeline, external databases, lakehouses, EMRs, telemetry, custom vector indexes, or multi-source retrieval',sub:'Custom chunking, embedding, ranking, or query planning required',signal:'Strong signal → Azure AI Foundry',sc:'var(--af)',next:'r_data'}
+    ]},
+  q_data_a:{id:'q_data_a',icon:'🗄️',step:'Decision 5 of 9 · Data Sources & RAG',
+    question:'What are your primary data and knowledge sources?',
+    context:'Custom RAG pipelines and complex enterprise data estates are the strongest architectural routing signals for Foundry.',
+    opts:[
+      {label:'M365, SharePoint, standard connectors, or simple external APIs — no custom retrieval architecture',sub:'Standard or moderately complex data sources',signal:'Continue evaluating',sc:'var(--muted)',next:'q_caps_a'},
+      {label:'Custom RAG pipeline, large-scale external systems, lakehouses, custom vector indexes, or multi-source retrieval',sub:'Custom chunking, embedding, ranking, or citation control required',signal:'Strong signal → Azure AI Foundry',sc:'var(--af)',next:'r_data'}
+    ]},
+  q_caps_s:{id:'q_caps_s',icon:'⚙️',step:'Decision 6 of 9 · Advanced Agent Capabilities',
+    question:'Does your agent require any of these advanced capabilities?',
+    context:'These capabilities require code-level access to the agent runtime — a Foundry engineering-first strength. Copilot Studio\'s managed environment trades this flexibility for faster time to build.',
+    opts:[
+      {label:'None — standard conversational features and built-in connectors are sufficient',sub:'No custom runtime, memory, or orchestration required',signal:'Signals: Copilot Studio',sc:'var(--cs)',next:'q_auto_s'},
+      {label:'One or more apply: Custom agent memory / state management  ·  Extract memory content to customer-owned storage  ·  Plan-and-execute mode or custom agent loops  ·  Custom MCP server development  ·  Native code execution environment (Copilot Studio has no code execution concept)  ·  Long-running ambient agents  ·  Control orchestration runtime region (data residency)  ·  Set reasoning effort parameters (low / medium / high)  ·  Invoke agent via direct REST API (not M365 SDK)  ·  Export agent definition in YAML / JSON for version control  ·  Execute scripts natively inside Skills',sub:'Any one of these requires Foundry-level engineering control — confirmed Copilot Studio limitations — these are confirmed Copilot Studio limitations',signal:'Strong signal → Azure AI Foundry',sc:'var(--af)',next:'r_caps'}
+    ]},
+  q_caps_a:{id:'q_caps_a',icon:'⚙️',step:'Decision 6 of 9 · Advanced Agent Capabilities',
+    question:'Does your agent require any of these advanced capabilities?',
+    context:'These capabilities require code-level access to the agent runtime — match the requirement to the platform that supports it.',
+    opts:[
+      {label:'None — standard conversational features are sufficient',sub:'No custom runtime, memory, or orchestration required',signal:'Continue evaluating',sc:'var(--muted)',next:'q_auto_a'},
+      {label:'One or more apply: Custom agent memory / state management  ·  Extract memory content to customer-owned storage  ·  Plan-and-execute mode or custom agent loops  ·  Custom MCP server development  ·  Native code execution environment (Copilot Studio has no code execution concept)  ·  Long-running ambient agents  ·  Control orchestration runtime region (data residency)  ·  Set reasoning effort parameters (low / medium / high)  ·  Invoke agent via direct REST API (not M365 SDK)  ·  Export agent definition in YAML / JSON for version control  ·  Execute scripts natively inside Skills',sub:'Any one of these requires Foundry-level engineering control — confirmed Copilot Studio limitations',signal:'Strong signal → Azure AI Foundry',sc:'var(--af)',next:'r_caps'}
+    ]},
+  q_auto_s:{id:'q_auto_s',icon:'🤖',step:'Decision 7 of 9 · Autonomy Level',
+    question:'How autonomous does the agent need to be?',
+    context:'Higher autonomy raises the need for deterministic workflows, auditability, and strong engineering guardrails — all Foundry strengths.',
+    opts:[
+      {label:'Guided conversational agent with bounded, predictable flows',sub:'Single-turn or simple multi-turn with defined scope',signal:'Signals: Copilot Studio',sc:'var(--cs)',next:'q_scale'},
+      {label:'Multi-step, stateful, multi-agent, or long-running autonomous processes',sub:'Agent chains, parallel tasks, or complex tool orchestration',signal:'Signals: Azure AI Foundry',sc:'var(--af)',next:'r_autonomy'}
+    ]},
+  q_auto_a:{id:'q_auto_a',icon:'🤖',step:'Decision 7 of 9 · Autonomy Level',
+    question:'How autonomous does the agent need to be?',
+    context:'Higher autonomy raises the need for deterministic workflows, auditability, and strong engineering guardrails.',
+    opts:[
+      {label:'Guided conversational agent with bounded, predictable flows',sub:'Single-turn or simple multi-turn with defined scope',signal:'Continue evaluating',sc:'var(--muted)',next:'q_model'},
+      {label:'Multi-step, stateful, multi-agent, or long-running autonomous processes',sub:'Agent chains, parallel tasks, or complex tool orchestration',signal:'Signals: Azure AI Foundry',sc:'var(--af)',next:'r_autonomy'}
+    ]},
+  q_scale:{id:'q_scale',icon:'📈',step:'Decision 8 of 9 · Production Scale',
+    question:'What is the expected production scale and strategic importance?',
+    context:'Production scale and team ownership model help determine which platform\'s operational capabilities best match the project.',
+    opts:[
+      {label:'Copilot Studio fits — citizen dev, M365 surfaces, standard connectors',sub:'Bounded scope, internal users, guided conversational flows',signal:'Signals: Copilot Studio',sc:'var(--cs)',next:'r_copilot'},
+      {label:'Enterprise-wide, mission-critical, or strategic AI platform',sub:'High-volume, broad scope, or business-critical reliability required',signal:'Evaluate further',sc:'var(--muted)',next:'q_rag'}
+    ]},
+  q_rag:{id:'q_rag',icon:'🔍',step:'Decision 9 of 9 · RAG & Observability',
+    question:'What level of RAG sophistication and production observability do you need?',
+    context:'The Microsoft Cloud Adoption Framework recommends standardized tracing, evaluations, and security testing for scalable agent operations.',
+    opts:[
+      {label:'Built-in knowledge grounding, standard analytics, and basic test sets are sufficient',sub:'Approved knowledge sources with standard retrieval',signal:'Leans: Copilot Studio (with caveats)',sc:'var(--warn-orange)',next:'r_copilot_warn'},
+      {label:'Custom chunking, vector strategy, CI/CD evaluations, distributed traces, or AI red teaming',sub:'Advanced retrieval architecture and production MLOps',signal:'Signals: Azure AI Foundry',sc:'var(--af)',next:'r_rag'}
+    ]},
+  q_model:{id:'q_model',icon:'🧠',step:'Decision 8 of 9 · Model Strategy',
+    question:'What are your model requirements?',
+    context:'Important distinction: Copilot Studio lets you attach a specific Azure AI Foundry model deployment to an individual <em>prompt tool</em> (a prompt node/action). That prompt node will always call that model — but this does NOT replace the orchestration runtime. The orchestration layer (reasoning, planning, tool selection) still runs on the default managed model with no control over region, reasoning effort, or deployment. Foundry gives you control over all of it.',
+    opts:[
+      {label:'Default managed model is sufficient for orchestration; optionally connecting a Foundry model to specific prompt tools (prompt nodes) covers additional needs',sub:'Prompt-level Foundry model connections are fine — no orchestration-level model control required',signal:'Leans: Hybrid approach',sc:'var(--hy)',next:'r_hybrid'},
+      {label:'Need to control the orchestration runtime model, set reasoning effort (low/medium/high), route across deployments, run evaluation pipelines, fine-tune, or manage model lifecycle',sub:'Orchestration-level model control required — prompt-level connections alone are insufficient',signal:'Signals: Azure AI Foundry',sc:'var(--af)',next:'r_model'}
+    ]},
+
+  r_copilot:{platform:'cs',icon:'🟣',label:'Recommendation',name:'Microsoft Copilot Studio',
+    sub:'Your requirement profile is a strong fit for Copilot Studio — purpose-built for M365 surfaces, Power Platform ownership, and guided conversational flows.',
+    reasons:['Citizen developer and solution engineer ownership model — fast build cycle with Copilot Studio\'s graphical builder, designed for this ownership profile.','Native M365 surface integration (Teams, SharePoint, Power Apps, Copilot) with zero custom channel work.','M365, SharePoint, Dataverse, and standard connectors integrate out of the box — no custom data pipeline required.','Guided conversational flows with bounded, predictable logic are Copilot Studio\'s core design target.','Microsoft-managed SLA, Power Platform governance, and built-in enterprise security baseline.'],
+    caveat:'<strong>Watch for growth:</strong> If data complexity increases, autonomy expands, or advanced RAG and evals become necessary, plan a re-evaluation. Copilot Studio can bring Foundry models into prompts for enhanced capability without a full platform switch.',
+    links:[{t:'Copilot Studio Docs',u:'https://learn.microsoft.com/en-us/microsoft-copilot-studio/',s:'cs'},{t:'Quickstart',u:'https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-get-started',s:'s-cs'}]},
+  r_copilot_warn:{platform:'warn',icon:'⚠️',label:'Recommendation',name:'Microsoft Copilot Studio',
+    sub:'Copilot Studio is a fit for current requirements. Factor in ALM, monitoring, and observability strategy as you plan for scale.',
+    reasons:['Data sources and autonomy level match Copilot Studio\'s strengths.','Enterprise-wide deployment benefits from observability, tracing, and evaluation planning — complement built-in analytics with Application Insights.','Plan your ALM and monitoring strategy early; Power Platform\'s governance model supports production-grade rollouts.','A hybrid architecture — Copilot Studio front-end with Foundry AI backend — is an easy evolution path if AI complexity grows.','Start with Studio\'s rapid build cycle; instrument telemetry via Application Insights from day one.'],
+    caveat:'<strong>Recommended action:</strong> Start with Copilot Studio, but architect for a clean exit. Build observability hooks from day one — they are significantly harder to retrofit than to include from the start. As usage grows, evaluate Foundry\'s agent evaluation, tracing, and RAG capabilities.',
+    links:[{t:'Copilot Studio Docs',u:'https://learn.microsoft.com/en-us/microsoft-copilot-studio/',s:'cs'},{t:'AI Agent CAF Guidance',u:'https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ai-agents/build-secure-process',s:'s-af'}]},
+  r_hybrid:{platform:'hy',icon:'🔀',label:'Recommendation',name:'Hybrid Architecture',
+    sub:'Copilot Studio as the front-end + Azure AI Foundry as the AI backbone. Best of both: M365 integration and enterprise AI infrastructure.',
+    reasons:['Professional development team builds and maintains the Foundry AI backend independently.','Copilot Studio surfaces the agent within Microsoft 365, Teams, and Power Platform natively.','Foundry provides the model lifecycle, evaluation, and observability layer the team needs.','Copilot Studio allows individual <em>prompt tools</em> (prompt nodes) to call a specific Foundry model deployment — note this is prompt-level, not orchestration-level. The orchestration runtime model (reasoning/planning) remains the default managed model.','Foundry services can be reused across multiple Copilot Studio agents as a shared AI platform.'],
+    caveat:'<strong>How the hybrid works:</strong> Deploy AI logic, retrieval, and model orchestration in Foundry. Expose it via API or MCP connector. Copilot Studio calls that endpoint to serve users in M365/Teams — giving citizen-dev-friendly interfaces on top of production-grade AI infrastructure.',
+    links:[{t:'Foundry Model in Prompt Tools',u:'https://learn.microsoft.com/en-us/microsoft-copilot-studio/bring-your-own-model-prompts',s:'cs'},{t:'Azure AI Foundry',u:'https://learn.microsoft.com/en-us/azure/ai-foundry/',s:'af'}]},
+  r_ip:{platform:'af',icon:'🔵',label:'Recommendation',name:'Azure AI Foundry',
+    sub:'IP ownership is a decisive qualification signal. Azure AI Foundry — deployed in the customer\'s Azure tenant — is the right fit when full IP ownership, data sovereignty, and commercial portability are required.',
+    reasons:['Copilot Studio is a SaaS platform — Microsoft operates the infrastructure and holds service IP.','Azure AI Foundry deploys entirely within the customer\'s Azure subscription, ensuring all artifacts are customer-owned.','Prompts, agent logic, conversation history, and model artifacts are stored in customer-controlled Azure resources.','Data sovereignty, portability, and commercial IP terms are enforceable only on customer-owned infrastructure.','Agent session state, conversation history, and memory are customer-accessible and exportable only in Foundry.'],
+    caveat:'<strong>Hybrid option:</strong> Even if users interact via Teams or M365, the AI backend should be in Foundry if IP ownership is required. A hybrid model (Copilot Studio front-end + Foundry backend in the customer\'s tenant) preserves IP ownership while retaining the M365 user experience.',
+    links:[{t:'Azure AI Foundry Overview',u:'https://learn.microsoft.com/en-us/azure/ai-foundry/',s:'af'},{t:'Data & Privacy',u:'https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/data-privacy',s:'s-af'}]},
+  r_enterprise:{platform:'af',icon:'🔵',label:'Recommendation',name:'Azure AI Foundry',
+    sub:'One or more enterprise requirements match Azure AI Foundry\'s architectural capabilities — these are the hard gates that determine platform fit.',
+    reasons:['Core42 / Compass model integration requires Foundry\'s AI Gateway for routing, rate limiting, content filtering, and failover.','Custom content safety policies and guardrails require Azure AI Content Safety with configurable policy enforcement and custom blocklists.','Private APIs and MCP servers behind a firewall require VNet integration, private endpoints, and managed network — Foundry capabilities.','Custom agent policy enforcement at the AI Gateway / infrastructure level — rate limiting, content filtering, custom audit logging, and circuit breakers beyond Studio built-ins require Foundry. Note: Copilot Studio agents do have built-in identity and run in a managed sandbox, but these cannot be customised or extended.'],
+    caveat:'<strong>Core42 / Compass note:</strong> Integrating the Compass model via AI Gateway requires Foundry to serve as the model routing and policy enforcement layer. The AI Gateway handles rate limiting, content filtering, audit logging, and model failover — none of which is available in Copilot Studio\'s managed environment.',
+    links:[{t:'Azure AI Foundry AI Gateway',u:'https://learn.microsoft.com/en-us/azure/api-management/api-management-key-concepts',s:'af'},{t:'Azure AI Content Safety',u:'https://learn.microsoft.com/en-us/azure/ai-services/content-safety/',s:'s-af'}]},
+  r_gov:{platform:'af',icon:'🔵',label:'Recommendation',name:'Azure AI Foundry',
+    sub:'Your governance and networking requirements are hard architectural gates. Azure AI Foundry — deployed in the customer\'s Azure tenant — is the right platform fit.',
+    reasons:['Private networking and VNet integration require Azure infrastructure-level controls.','Azure RBAC and managed identity require Foundry\'s native Azure integration.','Key Vault integration for secrets and credentials requires Foundry or Azure-native tooling.','Azure landing zone compliance mandates infrastructure-as-code and policy controls Foundry supports natively.','AI Gateway patterns — rate limiting, content filtering, audit logging — are Foundry capabilities.'],
+    caveat:'<strong>Hybrid option:</strong> If some users are in Teams or M365, a hybrid model is still viable. Deploy Foundry as the AI backend with private networking, and optionally surface via a Copilot Studio front-end that calls your Foundry API endpoint. The networking controls remain in Foundry.',
+    links:[{t:'Foundry Security Overview',u:'https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/security-overview',s:'af'},{t:'AI Agent CAF Guidance',u:'https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ai-agents/build-secure-process',s:'s-af'}]},
+  r_data:{platform:'af',icon:'🔵',label:'Recommendation',name:'Azure AI Foundry',
+    sub:'Your data estate or custom RAG requirements match Foundry\'s retrieval architecture. Data pipeline complexity is a strong routing signal between the two platforms.',
+    reasons:['Custom RAG pipelines — chunking, embedding, ranking, query planning, and citation control — require Foundry\'s retrieval tooling.','Custom vector indexes, HNSW/PQ configuration, and Azure AI Search integration are Foundry capabilities.','Multi-source RAG with re-ranking and fusion retrieval needs code-level orchestration beyond Studio\'s knowledge sources.','Large-scale external databases, lakehouses (ADLS, Fabric, Synapse), EMRs, and telemetry connect natively to Foundry.','Retrieval evaluation and ground-truth scoring require Foundry\'s evaluation framework.'],
+    caveat:'<strong>Portfolio note:</strong> Simpler agents using only M365 data may still be appropriate for Copilot Studio. Use Foundry where data complexity or custom RAG is the constraint; Copilot Studio for agents where built-in data connectors and M365 surfaces are sufficient.',
+    links:[{t:'Azure AI Search RAG',u:'https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/retrieval-augmented-generation',s:'af'},{t:'Azure AI Foundry',u:'https://learn.microsoft.com/en-us/azure/ai-foundry/',s:'s-af'}]},
+  r_caps:{platform:'af',icon:'🔵',label:'Recommendation',name:'Azure AI Foundry',
+    sub:'The agent capabilities in your requirement profile need code-level access to the runtime — Azure AI Foundry is the right platform fit.',
+    reasons:['Custom agent memory and state management requires persistent storage (Cosmos DB, Redis, SQL) wired into the agent lifecycle — Copilot Studio\'s built-in memory (likely Cosmos DB) is not accessible or extractable to customer storage.','Orchestration runtime region control is not available in Copilot Studio — you cannot specify which region the reasoning/planning layer runs in, which can trigger data residency concerns.','Reasoning effort parameter control (low / medium / high) is a Foundry capability — Copilot Studio does not expose this setting; workarounds using crafted instructions are less reliable.','Plan-and-execute mode and custom agent loops require building or customizing the agent harness at the code level — not possible in Copilot Studio\'s managed environment.','Custom MCP server development requires engineering tooling, versioning, and deployment pipelines. Connecting Studio to MCP servers behind a firewall requires firewall changes (IP range allowlisting), which many enterprise security teams reject.','Copilot Studio agents are accessed via the M365 SDK client only — there is no direct REST API endpoint. Foundry agents expose standard API endpoints for any client to call.','Script execution inside Skills is not natively supported in Copilot Studio (workaround: Azure Functions or HTTP calls). Foundry is code-first with full script and custom logic support.','Agent definition export in YAML / JSON is not available in Copilot Studio — it uses solution packages with Git/pipeline integration instead. Foundry is fully code-first and versionable in any format.'],
+    caveat:'<strong>Agent harness note:</strong> Building a custom agent loop in Foundry means you control every orchestration step: planning, tool selection, memory retrieval, reflection, and output validation. This is a significant engineering investment, but produces deterministic, auditable, and extensible behavior that managed platforms cannot offer.',
+    links:[{t:'Azure AI Foundry Agents',u:'https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/agents',s:'af'},{t:'Azure Durable Functions',u:'https://learn.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-overview',s:'s-af'}]},
+  r_autonomy:{platform:'af',icon:'🔵',label:'Recommendation',name:'Azure AI Foundry',
+    sub:'The autonomy pattern you need — multi-step, stateful, multi-agent, or long-running — matches Foundry\'s orchestration and engineering model.',
+    reasons:['Multi-agent architectures require deterministic, code-level routing and error handling between agent instances.','Stateful, long-running processes require durable orchestration patterns (Durable Functions, Logic Apps, Foundry Agents).','Parallel task execution and tool chaining need robust error handling and circuit-breaker patterns.','Auditability of autonomous decisions requires distributed traces, evaluation logs, and human-in-the-loop checkpoints.','Complex tool validation and state machine management require engineering patterns beyond standard flow builders.'],
+    caveat:'<strong>Governance note:</strong> The Microsoft Cloud Adoption Framework flags that higher autonomy requires standardized tracing, human-in-the-loop checkpoints, and AI red teaming. Build these into your Foundry architecture from day one — they are significantly harder to retrofit.',
+    links:[{t:'Azure AI Foundry Agents',u:'https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/agents',s:'af'},{t:'Multi-Agent Patterns',u:'https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/multi-agent',s:'s-af'}]},
+  r_rag:{platform:'af',icon:'🔵',label:'Recommendation',name:'Azure AI Foundry',
+    sub:'Your requirements for advanced RAG and production observability match Foundry\'s model lifecycle and observability capabilities.',
+    reasons:['Custom chunking, embedding, and ranking strategies require code-level retrieval control.','Vector store configuration and query planning need Foundry\'s Azure AI Search integration.','CI/CD evaluation pipelines with ground-truth datasets require Foundry\'s evaluation framework.','Distributed tracing and latency baselines require Application Insights or Foundry\'s native observability stack.','AI red teaming and safety evaluations are Foundry Responsible AI capabilities built for production.'],
+    caveat:'<strong>Enterprise RAG note:</strong> Even if initial data sources are simple, enterprise-scale deployment (high throughput, compliance, SLA) requires the observability stack Foundry provides. Don\'t start at scale without traces and evals — significantly harder to retrofit than to build in from the start.',
+    links:[{t:'Foundry Evaluation Framework',u:'https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/evaluation',s:'af'},{t:'Azure AI Search RAG',u:'https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview',s:'s-af'}]},
+  r_model:{platform:'af',icon:'🔵',label:'Recommendation',name:'Azure AI Foundry',
+    sub:'Your model strategy requirements — routing, custom deployments, or evaluation pipelines — match Foundry\'s full model lifecycle management.',
+    reasons:['Model routing (e.g., GPT-4o for complex tasks, GPT-4o-mini for simple ones) requires Foundry deployment configuration.','Custom model deployments with provisioned throughput (PTUs) are Foundry capabilities.','Systematic model evaluation against ground-truth datasets requires Foundry\'s eval framework.','Fine-tuning workflows and model versioning are managed within Azure AI Foundry.','Cost and latency baselines across model versions need Foundry\'s monitoring and logging stack.'],
+    caveat:'<strong>Important distinction:</strong> Copilot Studio allows you to attach a Foundry model deployment to a specific <em>prompt tool</em> (prompt node). That prompt will always use that model. However, the orchestration runtime (the layer that reasons, plans, and selects tools) still uses the default managed model — you cannot change its region, set reasoning effort parameters, or route it to a different deployment. If these orchestration-level controls matter, Foundry is required.',
+    links:[{t:'Foundry Model Catalog',u:'https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/models',s:'af'},{t:'Foundry Model in Studio Prompt Tools',u:'https://learn.microsoft.com/en-us/microsoft-copilot-studio/bring-your-own-model-prompts',s:'s-cs'}]}
+};
+
+const TABLE=[
+  {f:'★ IP Ownership',cs:'SaaS/platform IP arrangement is acceptable; customer owns data and configurations',af:'Customer must own all IP — code, prompts, model artifacts, conversation history, and agent logic',sig:'hard',sl:'Hardest gate'},
+  {f:'Core42 / Compass Models',cs:'Not supported in Copilot Studio\'s managed model catalog',af:'Requires Foundry AI Gateway for model routing, content filtering, rate limiting, and failover',sig:'hard',sl:'Hard gate'},
+  {f:'Content Safety & Guardrails',cs:'Standard built-in content moderation is sufficient',af:'Custom content safety policies, guardrails, prompt shields, or custom blocklists required',sig:'hard',sl:'Hard gate'},
+  {f:'Private APIs / Firewall',cs:'All APIs and services are publicly accessible',af:'APIs, MCP servers, or data sources are behind a corporate firewall or private network',sig:'hard',sl:'Hard gate'},
+  {f:'Custom Agent Policy (AI Gateway)',cs:'Built-in Power Platform policies and managed identity are sufficient; note Copilot Studio agents do have built-in identity and run in a managed sandbox',af:'Custom policy enforcement at AI Gateway level — rate limiting, content filtering, audit logging, circuit breakers beyond Studio built-ins required',sig:'hard',sl:'Hard gate if regulated'},
+  {f:'Builder Profile',cs:'Business technologists, Power Platform makers, or citizen developers',af:'Professional developers, data/AI engineers, or platform teams requiring code-level control',sig:'strong',sl:'Strong'},
+  {f:'User Surface',cs:'Teams, M365 Copilot, SharePoint, Power Apps, web chat, or standard business channels',af:'Custom app, backend service, product API, or multi-channel enterprise application',sig:'mod',sl:'Moderate'},
+  {f:'Governance & Security',cs:'SaaS governance and Power Platform policies are sufficient for compliance',af:'Private networking, Azure RBAC, Key Vault, managed identity, network isolation, Azure landing zone',sig:'hard',sl:'Hard gate'},
+  {f:'Data Sources',cs:'M365, SharePoint, Dataverse, websites, standard connectors, or simple external APIs',af:'External DBs, lakehouses, EMRs, telemetry, custom indexes, or multi-source enterprise RAG',sig:'strong',sl:'Strongest signal'},
+  {f:'Custom RAG Pipeline',cs:'Built-in knowledge grounding with approved sources is sufficient',af:'Custom chunking, embedding, ranking, query planning, vector strategy, or citation control required',sig:'strong',sl:'Strong'},
+  {f:'Agent Memory & State',cs:'Standard session context is sufficient — no persistent cross-session memory needed',af:'Custom persistent memory (Cosmos DB, Redis), episodic/semantic memory, or cross-session state',sig:'strong',sl:'Strong'},
+  {f:'Advanced Agent Harness',cs:'Standard Copilot Studio agent flows and topic orchestration are sufficient',af:'Plan-and-execute mode, custom agent loop, reflection steps, or tool-use orchestration required',sig:'strong',sl:'Strong'},
+  {f:'Custom MCP Server Dev',cs:'Using existing connectors, Power Automate flows, or published MCP servers',af:'Building and deploying custom MCP servers with versioning, auth, and deployment pipelines',sig:'strong',sl:'Strong'},
+  {f:'Native Code Execution',cs:'No code execution concept in Copilot Studio — scripts run via external Azure Functions or HTTP calls only, not inside the agent',af:'Code-first platform with native code execution, containerised tool environments, and Toolbox support',sig:'strong',sl:'Strong'},
+  {f:'Ambient / Long-running Agents',cs:'Synchronous, bounded conversational interactions',af:'Long-running, durable, event-driven ambient agents (Durable Functions, Dapr, Foundry Agents SDK)',sig:'strong',sl:'Strong'},
+  {f:'Agent Sessions & History',cs:'Conversation history is accessible via standard tables with appropriate roles (classic experience) — memory content itself cannot be extracted to customer storage',af:'Full data plane access to agent sessions, state, conversation threads, memory stores, and history. Customer can bring their own memory (Cosmos DB, Redis)',sig:'strong',sl:'Strong'},
+  {f:'RAG Sophistication',cs:'Simple/medium knowledge grounding with approved knowledge sources',af:'Advanced RAG: custom chunking, ranking, multi-source retrieval, evaluation, citation control',sig:'strong',sl:'Strong'},
+  {f:'Model Strategy',cs:'Default managed model for orchestration; individual prompt tools (prompt nodes) can connect to a specific Foundry model deployment — this is prompt-level, not orchestration-level',af:'Control over orchestration runtime model, reasoning effort parameters (low/medium/high), model routing, custom deployments, evaluation pipelines, and fine-tuning',sig:'strong',sl:'Strong'},
+  {f:'Orchestration Region / Data Residency',cs:'Cannot specify which region the orchestration runtime runs in — confirmed limitation',af:'Deploy in any Azure region; full control over where orchestration, models, and data reside',sig:'hard',sl:'Hard gate if regulated'},
+  {f:'Reasoning Effort Control',cs:'Cannot set reasoning effort parameters (low/medium/high); instruction-based workarounds are less reliable',af:'Foundry supports reasoning effort parameters for supported models — affects depth, quality, and cost',sig:'strong',sl:'Strong'},
+  {f:'Memory Extraction to Storage',cs:'Built-in memory cannot be extracted to customer-owned storage; raises data residency concerns',af:'Bring your own memory store (Cosmos DB, Redis) or access built-in memory programmatically',sig:'strong',sl:'Strong'},
+  {f:'Direct REST API Invocation',cs:'No direct REST API — agents accessed via M365 SDK client only; custom UIs require SDK integration',af:'Foundry agents expose standard API endpoints consumable by any client or system',sig:'strong',sl:'Strong'},
+  {f:'Script Execution in Skills',cs:'Scripts cannot be executed natively inside Skills — workaround via Azure Functions or HTTP requests only',af:'Code-first platform with full native script and custom logic execution',sig:'mod',sl:'Moderate'},
+  {f:'Agent Export / Version Control',cs:'No YAML/JSON export — uses solution packaging with Git/pipeline integration for ALM',af:'Code-first; agent definitions fully versionable in any format (YAML, JSON, Bicep, etc.)',sig:'mod',sl:'Moderate'},
+  {f:'Observability & Evals',cs:'Built-in analytics, basic telemetry, and standard test sets are sufficient',af:'Traces, agent evaluators, CI/CD evaluations, monitoring dashboards, AI red teaming, cost/latency baselines',sig:'strong',sl:'Strong at scale'},
+  {f:'Autonomy Level',cs:'Guided conversational task agent with bounded, predictable flows',af:'Autonomous, multi-step, stateful, multi-agent, or long-running processes',sig:'strong',sl:'Strong'},
+  {f:'Agent Framework / SDK',cs:'Not applicable — Copilot Studio provides its own visual orchestration engine. Existing framework code (LangGraph, AutoGen, etc.) cannot be imported.',af:'Azure AI Foundry Hosted Agents supports LangGraph, LangChain, Microsoft Agent Framework, AutoGen, CrewAI, AGNO, Semantic Kernel, Pydantic AI, and OpenAI Agents SDK natively — no rewrite required',sig:'hard',sl:'Hard gate if framework exists'},
+  {f:'Orchestration Model',cs:'Topics, generative orchestration, agent flows, and Power Automate-style workflows — graphical, visual',af:'Agent Framework, LangGraph, OpenAI Agents SDK, Anthropic SDK, Semantic Kernel, custom code, and hosted agents — code-first, full control',sig:'strong',sl:'Strong'},
+  {f:'Primary Audience',cs:'Business users, makers, fusion teams, Power Platform developers — graphical builder — visual, maker-friendly ownership model',af:'AI engineers, app developers, platform teams — code-first, SDK/API/portal ownership model',sig:'strong',sl:'Strong'},
+  {f:'Observability Depth',cs:'Maker and admin analytics, conversation insights, and built-in testing — suitable for business owners',af:'Distributed tracing, evaluations, OpenTelemetry, Application Insights / Azure Monitor — production-grade MLOps observability',sig:'strong',sl:'Strong'},
+  {f:'Distribution Channels',cs:'Microsoft Teams, M365 Copilot, SharePoint, Power Pages, web chat, and standard channels',af:'Stable REST endpoint, API invocation, Teams/M365 publishing, custom applications, and A2A (agent-to-agent) scenarios',sig:'mod',sl:'Moderate'},
+  {f:'Agent Type',cs:'Knowledge assistants, Employee Copilots, and guided customer support agents are Copilot Studio\'s design sweet spot',af:'Autonomous agents, multi-agent workflows, research agents, and long-running ambient processes align with Foundry\'s engineering model',sig:'strong',sl:'Strong'},
+  {f:'External / Customer-facing Users',cs:'Fully supported for external users via published web chat channels or custom website embedding',af:'Required when external channel is a custom-built application, product API, or non-Microsoft surface needing direct REST access',sig:'mod',sl:'Moderate'},
+  {f:'Data Residency (Orchestration)',cs:'Cannot specify which region the orchestration runtime executes in — confirmed limitation',af:'Full Azure region control for orchestration, model inference, and data storage — meets strict data residency requirements',sig:'hard',sl:'Hard gate if regulated'},
+  {f:'Production Scale',cs:'Team or org-wide transformation — production-grade, with Microsoft-managed SLA',af:'Strategic enterprise transformation, mission-critical AI platform, or core application component',sig:'mod',sl:'Moderate'},
+  {f:'Time to Value',cs:'Rapid MVP or production agent — days to weeks',af:'Robust platform engineering, reusable services, production-grade AI — weeks to months',sig:'trade',sl:'Trade-off'}
+];
+
+const SIGNALS=[
+  {icon:'🟣',title:'Copilot Studio — right fit signals',color:'var(--cs)',items:[
+    'SaaS IP ownership is acceptable to the customer or organization',
+    'Builders are citizen devs, solution engineers, or Power Platform makers',
+    'Users live in Teams, M365 Copilot, SharePoint, or Power Apps',
+    'Data is in Dataverse, SharePoint, M365, or standard connectors',
+    'No custom RAG pipeline, memory management, or agent loop needed',
+    'Agent type is Knowledge Assistant or Employee Copilot',
+    'Agent is conversational with bounded, predictable, guided flows',
+    'Conversation history accessible via standard tables with appropriate roles',
+    'Solution packaging + Git integration satisfies basic ALM/version control needs',
+    'Agents invocable externally via M365 SDK (not direct REST API)'
+  ]},
+  {icon:'🔴',title:'Foundry — hard gate signals (any one = Foundry)',color:'var(--warn-orange)',items:[
+    '⚖️  Customer must own all IP and model artifacts',
+    '🔵  Core42 / Compass model integration required',
+    '🛡️  Custom content safety + guardrails required',
+    '🔒  Private APIs or MCP servers behind a firewall',
+    '🔐  Private networking / RBAC / Key Vault / Azure landing zone',
+    '🧩  Custom agent policy at AI Gateway / infrastructure level'
+  ]},
+  {icon:'🔵',title:'Foundry — strong fit signals',color:'var(--af)',items:[
+    '🗄️  Custom RAG pipeline or complex enterprise data estate',
+    '🧠  Custom agent memory or cross-session state management',
+    '⚙️  Custom agent loop, plan-and-execute, or harness features',
+    '🛠️  Custom MCP server development required',
+    '🧩  Team already uses an agent framework (LangGraph, AutoGen, CrewAI, AGNO, Semantic Kernel, Pydantic AI, OpenAI Agents SDK) → use Foundry Hosted Agents',
+    '🤖  Agent type is Autonomous, Multi-Agent Workflow, or Research Agent',
+    '💻  Native code execution environment (not available in Studio)  ·  Long-running ambient agents',
+    '📋  Access to agent sessions, state, or conversation history',
+    '🤖  Multi-step, stateful, or multi-agent autonomous processes',
+    '🔍  Advanced RAG evals, distributed traces, or CI/CD evaluations'
+  ]},
+  {icon:'🔀',title:'Hybrid — right fit signals',color:'var(--hy)',items:[
+    'Users are in M365/Teams but data or AI needs are complex',
+    'Need Copilot Studio UX with Foundry model lifecycle control',
+    'Team has both citizen devs and professional developers',
+    'Starting simple but need a clear Foundry evolution path',
+    'Multiple agents in portfolio with varying complexity levels',
+    'IP must stay in Azure tenant but a Teams surface is required'
+  ]}
+];
+
+// ── STATE & ROUTING ────────────────────────────────────────────────────────────
+
+// ── SIGNAL WEIGHTS (per question, per option index) ──────────────────────────
+const WEIGHTS={
+  q_ip:       [{cw:2,aw:0},{cw:0,aw:3}],
+  q_framework:[{cw:1,aw:0},{cw:0,aw:3}],
+  q_special:  [{cw:1,aw:0},{cw:0,aw:3}],
+  q_type:     [{cw:2,aw:0},{cw:1,aw:1},{cw:0,aw:3}],
+  q_builder:  [{cw:2,aw:0},{cw:0,aw:2},{cw:1,aw:1}],
+  q_surface:  [{cw:2,aw:0},{cw:0,aw:2}],
+  q_gov:      [{cw:1,aw:0},{cw:0,aw:2}],
+  q_data_s:   [{cw:2,aw:0},{cw:0,aw:2}],
+  q_data_a:   [{cw:1,aw:0},{cw:0,aw:2}],
+  q_caps_s:   [{cw:1,aw:0},{cw:0,aw:3}],
+  q_caps_a:   [{cw:1,aw:0},{cw:0,aw:3}],
+  q_auto_s:   [{cw:2,aw:0},{cw:0,aw:2}],
+  q_auto_a:   [{cw:1,aw:0},{cw:0,aw:2}],
+  q_scale:    [{cw:2,aw:0},{cw:0,aw:1}],
+  q_rag:      [{cw:1,aw:0},{cw:0,aw:2}],
+  q_model:    [{cw:0,aw:0},{cw:0,aw:2}],
+};
+
+// ── SERVICE STACK BADGES per result ──────────────────────────────────────────
+const SERVICES={
+  r_copilot:      {cs:['Copilot Studio','Power Automate','Dataverse'],sh:['Microsoft Teams','SharePoint','M365 Copilot'],nt:[],lic:'M365 E3/E5 · Copilot Studio capacity pack'},
+  r_copilot_warn: {cs:['Copilot Studio','Power Automate'],sh:['Application Insights','Microsoft Teams'],nt:['Azure Monitor'],lic:'M365 E3/E5 · Copilot Studio capacity · Azure Monitor'},
+  r_hybrid:       {af:['Azure AI Foundry','Azure OpenAI'],cs:['Copilot Studio'],sh:['Azure AI Search','MCP connector','Power Automate'],lic:'M365 E3/E5 · Azure subscription · OpenAI access'},
+  r_ip:           {af:['Azure AI Foundry','Azure OpenAI','Azure Key Vault'],sh:['GitHub Actions','Azure DevOps','Azure RBAC'],lic:'Azure subscription · Azure OpenAI access'},
+  r_enterprise:   {af:['Azure AI Foundry','Azure OpenAI','AI Content Safety'],sh:['Azure API Management','Private Endpoints','Azure Monitor'],lic:'Azure subscription · Azure OpenAI access · APIM'},
+  r_gov:          {af:['Azure AI Foundry','Azure VNet','Azure Key Vault'],sh:['Private Endpoints','Defender for Cloud','Azure RBAC'],lic:'Azure subscription · Azure OpenAI access · Defender plan'},
+  r_data:         {af:['Azure AI Foundry','Azure AI Search','Azure OpenAI'],sh:['Microsoft Fabric','Cosmos DB','Redis Cache'],lic:'Azure subscription · Azure OpenAI access · Fabric capacity'},
+  r_caps:         {af:['Azure AI Foundry','Azure Functions','Cosmos DB'],sh:['Redis Cache','Container Apps','Application Insights'],lic:'Azure subscription · Azure OpenAI access'},
+  r_autonomy:     {af:['Azure AI Foundry','Durable Functions','Service Bus'],sh:['Logic Apps','Azure Monitor','Application Insights'],lic:'Azure subscription · Azure OpenAI access'},
+  r_rag:          {af:['Azure AI Foundry','Azure AI Search','Azure OpenAI'],sh:['Blob Storage','Application Insights','Azure Monitor'],lic:'Azure subscription · Azure OpenAI access'},
+  r_model:        {af:['Azure AI Foundry','Azure OpenAI (multi)','AI Model Catalog'],sh:['Azure API Management','Azure Monitor'],lic:'Azure subscription · Azure OpenAI access · APIM'},
+};
+
+// ── RESULT METADATA (complexity + timeline) ───────────────────────────────────
+const META={
+  r_copilot:      {cx:'Low',tl:'2–6 weeks',match:'Strong fit'},
+  r_copilot_warn: {cx:'Low–Medium',tl:'4–10 weeks',match:'Good fit — plan for scale'},
+  r_hybrid:       {cx:'Medium–High',tl:'6–12 weeks',match:'Best of both'},
+  r_ip:           {cx:'High',tl:'8–16 weeks',match:'Definitive fit'},
+  r_enterprise:   {cx:'High',tl:'8–16 weeks',match:'Definitive fit'},
+  r_gov:          {cx:'High',tl:'10–20 weeks',match:'Definitive fit'},
+  r_data:         {cx:'Medium–High',tl:'6–14 weeks',match:'Strong fit'},
+  r_caps:         {cx:'High',tl:'8–16 weeks',match:'Strong fit'},
+  r_autonomy:     {cx:'High',tl:'10–20 weeks',match:'Strong fit'},
+  r_rag:          {cx:'Medium–High',tl:'6–12 weeks',match:'Strong fit'},
+  r_model:        {cx:'Medium',tl:'4–10 weeks',match:'Strong fit'},
+};
+
+let hist=[],csScore=0,afScore=0;
+const MAX=11;
+
+function switchTab(id){
+  document.querySelectorAll('.pivot-item').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelector('[data-tab="'+id+'"]').classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+}
+
+function render(nodeId){
+  const node=TREE[nodeId];
+  const pct=Math.round((hist.length/MAX)*100);
+  document.getElementById('prog-bar').style.width=pct+'%';
+  document.getElementById('prog-label').textContent=nodeId.startsWith('r_')?'Recommendation ready':'Question '+(hist.length+1)+' of ~'+MAX;
+  document.getElementById('prog-pct').textContent=pct>0?pct+'% complete':'';
+  renderCrumbs();
+  nodeId.startsWith('r_')?renderResult(nodeId):renderQ(nodeId);
+}
+
+function renderQ(nodeId){
+  const n=TREE[nodeId];
+  const LETTERS=['A','B','C'];
+  const opts=n.opts.map((o,i)=>`
+    <button class="option" onclick="pick(${i},'${nodeId}')">
+      <div class="opt-num">${LETTERS[i]}</div>
+      <div class="opt-content">
+        <div class="opt-label">${o.label}</div>
+        ${o.sub?`<div class="opt-sub">${o.sub}</div>`:''}
+        ${o.signal?`<div class="opt-signal" style="color:${o.sc}">${o.signal}</div>`:''}
+      </div>
+    </button>`).join('');
+  document.getElementById('q-mount').innerHTML=`
+    <div class="q-card">
+      <div class="q-header">
+        <div class="q-icon-wrap">${n.icon}</div>
+        <div class="q-meta">
+          <div class="q-eyebrow">${n.step}</div>
+          <div class="q-title">${n.question}</div>
+        </div>
+      </div>
+      <div class="q-hint"><span class="q-hint-ico">💡</span><span>${n.context}</span></div>
+      <div class="options">${opts}</div>
+    </div>`;
+}
+
+function pick(i,nodeId){
+  const n=TREE[nodeId],o=n.opts[i];
+  const w=(WEIGHTS[nodeId]||[])[i]||{cw:0,aw:0};
+  csScore+=w.cw; afScore+=w.aw;
+  hist.push({nodeId,stepLabel:n.step.split('·')[1]?.trim()||n.step,q:n.question,a:o.label,next:o.next});
+  updateTracker();
+  render(o.next);
+}
+
+function goBack(idx){
+  hist=hist.slice(0,idx);
+  render(hist.length===0?'q_ip':hist[hist.length-1].next);
+}
+
+function renderCrumbs(){
+  document.getElementById('breadcrumb').innerHTML=hist.map((h,i)=>`
+    <div class="crumb" onclick="goBack(${i})">
+      <span class="crumb-q">${h.stepLabel}</span>
+      <span class="crumb-a">${h.a.length>40?h.a.slice(0,38)+'…':h.a}</span>
+      <span class="crumb-x">✕</span>
+    </div>`).join('');
+}
+
+const BMAP={cs:'cs',af:'af',hy:'hy',warn:'warn'};
+const IMAP={cs:'rir-cs',af:'rir-af',hy:'rir-hy',warn:'rir-warn'};
+const PMAP={cs:'rp-cs',af:'rp-af',hy:'rp-hy',warn:'rp-warn'};
+const DMAP={cs:'rd-cs',af:'rd-af',hy:'rd-hy',warn:'rd-warn'};
+const LMAP={cs:'btn-primary-cs',af:'btn-primary-af','s-cs':'btn-subtle-cs','s-af':'btn-subtle-af'};
+
+function renderResult(nodeId){
+  const r=TREE[nodeId];
+  const p=r.platform;
+  const m=META[nodeId]||{};
+  const svc=SERVICES[nodeId]||{};
+  const reasons=r.reasons.map(x=>`<div class="reason"><div class="r-dot ${DMAP[p]}"></div><span>${x}</span></div>`).join('');
+  const links=r.links.map(l=>`<a href="${l.u}" target="_blank" rel="noopener" class="btn ${LMAP[l.s]||'btn-outline'}">${l.t} ↗</a>`).join('');
+  const trail=hist.map(h=>`<div class="ans-row"><div class="ans-q">${h.stepLabel}</div><div class="ans-a">${h.a}</div></div>`).join('');
+  // Build service badges
+  const mkBadge=(items,cls)=>(items||[]).map(s=>`<span class="svc-badge ${cls}">${s}</span>`).join('');
+  const badges=mkBadge(svc.cs,'svc-cs')+mkBadge(svc.af,'svc-af')+mkBadge(svc.sh,'svc-sh')+mkBadge(svc.nt,'svc-nt');
+  const svcHtml=badges?`<div class="svc-section"><div class="svc-hdr">Microsoft Services Involved</div><div class="svc-badges">${badges}</div>${svc.lic?`<div class="lic-row"><span class="lic-ico">🔑</span><span>Required licences: ${svc.lic}</span></div>`:''}</div>`:'';
+  // Meta chips
+  const metaHtml=`<div class="meta-chips">${m.match?`<div class="meta-chip"><span class="mc-icon">🎯</span>${m.match}</div>`:''}${m.cx?`<div class="meta-chip"><span class="mc-icon">⚙️</span>Complexity: ${m.cx}</div>`:''}${m.tl?`<div class="meta-chip"><span class="mc-icon">📅</span>Typical build: ${m.tl}</div>`:''}</div>`;
+  document.getElementById('q-mount').innerHTML=`
+    <div class="result-card res-${BMAP[p]}">
+      <div class="result-header">
+        <div class="result-icon-ring ${IMAP[p]}">${r.icon}</div>
+        <div style="flex:1">
+          <div class="result-platform ${PMAP[p]}">${r.label}</div>
+          <div class="result-name">${r.name}</div>
+          <div class="result-subtitle">${r.sub}</div>
+        </div>
+      </div>
+      ${metaHtml}
+      <div class="divider"></div>
+      <div class="reasons-label">Key reasons for this recommendation</div>
+      ${reasons}
+      ${svcHtml}
+      <div class="caveat">${r.caveat}</div>
+      <div class="result-actions">
+        ${links}
+        <button id="copy-btn-${nodeId}" class="copy-btn" onclick="copyResult('${nodeId}')">📋 Copy summary</button>
+        <button class="btn btn-outline" onclick="restart()">↩ Start over</button>
+      </div>
+    </div>
+    ${trail?`<div class="answers-trail"><div class="answers-trail-hdr">Your answers</div>${trail}</div>`:''}`;
+}
+
+
+function updateTracker(){
+  const total=csScore+afScore;
+  const panel=document.getElementById('tracker');
+  const lean=document.getElementById('trk-lean');
+  const tugCS=document.getElementById('tug-cs');
+  const tugAF=document.getElementById('tug-af');
+  const dot=document.getElementById('tug-dot');
+  if(!panel||total===0)return;
+  panel.classList.add('vis');
+  const csPct=Math.round((csScore/total)*100);
+  const afPct=100-csPct;
+  // bars grow inward — cap at 48% so they don't overlap
+  tugCS.style.width=Math.min(csPct,48)+'%';
+  tugAF.style.width=Math.min(afPct,48)+'%';
+  dot.style.left=csPct+'%';
+  lean.className='';
+  const csB=document.querySelector('.pb-cs');
+  const afB=document.querySelector('.pb-af');
+  if(csB)csB.classList.remove('pulse');
+  if(afB)afB.classList.remove('pulse');
+  if(csPct>=65){
+    lean.classList.add('lcs');lean.textContent='Leaning: Copilot Studio';
+    if(csB){csB.classList.add('pulse');}
+  } else if(afPct>=65){
+    lean.classList.add('laf');lean.textContent='Leaning: Azure AI Foundry';
+    if(afB){afB.classList.add('pulse');}
+  } else if(csPct>=55){lean.classList.add('lcs');lean.textContent='Slight lean: Copilot Studio';}
+  else if(afPct>=55){lean.classList.add('laf');lean.textContent='Slight lean: Azure AI Foundry';}
+  else if(csScore===0&&afScore===0){lean.textContent='Evaluating…';}
+  else{lean.classList.add('lhy');lean.textContent='Balanced — keep going';}
+}
+
+function copyResult(nodeId){
+  const r=TREE[nodeId];
+  const m=META[nodeId]||{};
+  const trail=hist.map(h=>`  ${h.stepLabel}: ${h.a}`).join('\n');
+  const reasons=r.reasons.map(x=>`  • ${x.replace(/<[^>]+>/g,'')}`).join('\n');
+  const text=[
+    '=== Microsoft Agent Platform Recommendation ===',
+    '',
+    `Platform:    ${r.name}`,
+    `Match:       ${m.match||''}`,
+    `Complexity:  ${m.cx||''}`,
+    `Timeline:    ${m.tl||''}`,
+    '',
+    r.sub,
+    '',
+    'Key Reasons:',
+    reasons,
+    '',
+    'Your Answers:',
+    trail,
+    '',
+    '─────────────────────────────',
+    'Generated by Agentic Factory · Agent Platform Decision Tool',
+  ].join('\n');
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById('copy-btn-'+nodeId);
+    if(btn){const o=btn.innerHTML;btn.innerHTML='✅ Copied!';btn.classList.add('copied');setTimeout(()=>{btn.innerHTML=o;btn.classList.remove('copied');},2200);}
+  }).catch(()=>{});
+}
+
+function restart(){
+  hist=[];csScore=0;afScore=0;
+  const t=document.getElementById('tracker');
+  if(t)t.classList.remove('vis');
+  document.querySelectorAll('.product-badge').forEach(b=>b.classList.remove('pulse'));
+  render('q_ip');
+}
+
+// ── OVERVIEW ─────────────────────────────────────────────────────────────────
+function buildOverview(){
+  document.getElementById('sig-grid').innerHTML=SIGNALS.map(s=>`
+    <div class="sig-card">
+      <div class="sig-card-title" style="color:${s.color}">${s.icon} ${s.title}</div>
+      ${s.items.map(item=>`<div class="sig-item"><div class="sig-dot" style="background:${s.color}"></div><span>${item}</span></div>`).join('')}
+    </div>`).join('');
+  const PILL={hard:'sp-hard',strong:'sp-strong',mod:'sp-mod',trade:'sp-trade'};
+  document.getElementById('tbl-body').innerHTML=TABLE.map(r=>`
+    <tr><td>${r.f}</td><td>${r.cs}</td><td>${r.af}</td><td><span class="sig-pill ${PILL[r.sig]}">${r.sl}</span></td></tr>`).join('');
+}
+
+// ── DIAGRAM ──────────────────────────────────────────────────────────────────
+function buildDiagram(){
+  const svg=document.getElementById('diag-svg');
+  if(!svg)return;
+  const FF='font-family="Segoe UI,system-ui,sans-serif"';
+  let s='';
+
+  /* ── helpers ─────────────────────────────────────────────────────── */
+  const R=(x,y,w,h,rx,fill,stroke,sw=1)=>
+    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+  const T=(x,y,t,sz,fw,fill,anchor='middle')=>
+    `<text x="${x}" y="${y}" font-size="${sz}" font-weight="${fw}" fill="${fill}" text-anchor="${anchor}" ${FF}>${t}</text>`;
+  const L=(x1,y1,x2,y2,col,dash='',mark='',sw=1.5)=>
+    `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="${sw}" stroke-dasharray="${dash}" ${mark?'marker-end="url(#'+mark+')"':''}/>`; 
+  const P=(d,col,dash='',mark='',sw=1.5)=>
+    `<path d="${d}" stroke="${col}" stroke-width="${sw}" stroke-dasharray="${dash}" fill="none" ${mark?'marker-end="url(#'+mark+')"':''}/>`; 
+
+  const Qcard=(x,y,w,bcolor,icon,title,sub)=>{
+    const cx=x+w/2;
+    return R(x,y,w,58,6,'white',bcolor)+R(x,y,4,58,2,bcolor,bcolor)+
+      T(cx,y+22,icon+'  '+title,13,600,'#242424')+T(cx,y+40,sub,10,400,'#616161');
+  };
+  const PathHeader=(x,y,w,icon,title,color)=>
+    R(x,y,w,38,6,color,color)+T(x+w/2,y+24,icon+'  '+title,13,700,'white');
+  const PathNode=(x,y,w,bc,icon,title,sub)=>{
+    const cx=x+w/2;
+    return R(x,y,w,52,5,'white',bc,1)+R(x,y,3,52,2,bc,bc)+
+      T(cx,y+19,icon+'  '+title,12,600,'#242424')+T(cx,y+35,sub,9.5,400,'#757575');
+  };
+  const OutcomeBox=(x,y,w,icon,name,sub,color)=>
+    R(x,y,w,58,8,color,color)+
+    T(x+w/2,y+24,icon+'  '+name,14,700,'white')+
+    T(x+w/2,y+42,sub,10,400,'rgba(255,255,255,0.85)');
+  const ExitPill=(x,y,label,color)=>
+    R(x,y,246,34,17,color,color)+T(x+123,y+22,label,11,700,'white');
+
+  /* ── defs ─────────────────────────────────────────────────────────── */
+  s+=`<defs>
+    <marker id="ag" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#9E9E9E"/></marker>
+    <marker id="ar" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#C50F1F"/></marker>
+    <marker id="ab" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#0078D4"/></marker>
+    <marker id="ap" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#7719AA"/></marker>
+    <marker id="ah" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#107C10"/></marker>
+  </defs>`;
+
+  /* ── START ──────────────────────────────────────────────────────────── */
+  s+=R(410,12,240,34,17,'#242424','#242424');
+  s+=T(530,34,'▶  Begin Qualification',13,600,'white');
+  s+=L(530,46,530,72,'#9E9E9E','','ag',1.5);
+
+  /* ── HARD GATE ZONE ─────────────────────────────────────────────────── */
+  s+=R(12,74,1036,256,8,'#FEF6F6','#C50F1F',1.5);
+  s+=T(24,91,'⛔  HARD GATES — any one exits immediately to Azure AI Foundry',10.5,700,'#C50F1F','start');
+
+  const qW=456,qX=20;
+  // Q1: IP Ownership
+  s+=Qcard(qX,98,qW,'#C50F1F','⚖️','IP Ownership',
+    'Customer must own all IP → Foundry    |    SaaS arrangement acceptable → continue');
+  s+=L(qX+qW,127,506,127,'#C50F1F','4,2','ar',1.5);
+  s+=ExitPill(508,110,'🔵  Foundry — IP Ownership','#005A9E');
+
+  // Q2: Enterprise + Governance
+  s+=L(qX+qW/2,156,qX+qW/2,172,'#9E9E9E','','ag',1.5);
+  s+=Qcard(qX,174,qW,'#C50F1F','🏢','Enterprise, Compliance & Governance',
+    'Firewall APIs · VNet/RBAC · Key Vault · data residency · custom policy → Foundry    |    None → continue');
+  s+=L(qX+qW,203,506,203,'#C50F1F','4,2','ar',1.5);
+  s+=ExitPill(508,186,'🔵  Foundry — Enterprise Gate','#005A9E');
+
+  // Q3: Agent Framework
+  s+=L(qX+qW/2,232,qX+qW/2,248,'#9E9E9E','','ag',1.5);
+  s+=Qcard(qX,250,qW,'#CA5010','🧩','Existing Agent Framework',
+    'LangGraph · AutoGen · Semantic Kernel · CrewAI · AGNO → Foundry Hosted Agents    |    None → continue');
+  s+=L(qX+qW,279,506,279,'#CA5010','4,2','ab',1.5);
+  s+=ExitPill(508,262,'🔵  Foundry — Hosted Agents','#0078D4');
+
+  // Right-side callout summary
+  s+=R(772,100,262,228,6,'white','#005A9E',1.5);
+  s+=T(784,118,'All hard gate exits lead to',10,700,'#005A9E','start');
+  s+=T(784,134,'Azure AI Foundry',10,700,'#005A9E','start');
+  s+=L(784,140,1022,140,'#C8E0F4','','',1);
+  ['IP ownership requirement','Enterprise / compliance gate','Agent framework in use','Governance & security controls'].forEach((g,i)=>{
+    s+=T(790,158+i*16,'• '+g,9.5,400,'#424242','start');
+  });
+  s+=T(784,232,'Any one is independently',9,400,'#9E9E9E','start');
+  s+=T(784,246,'sufficient for this recommendation.',9,400,'#9E9E9E','start');
+  s+=L(903,304,903,318,'#0078D4','3,3','ab',1.5);
+
+  // Continue down arrow
+  s+=L(qX+qW/2,308,qX+qW/2,324,'#9E9E9E','','ag',1.5);
+
+  /* ── ROUTING NODE ───────────────────────────────────────────────────── */
+  s+=R(12,326,760,64,8,'white','#7719AA',1.5);
+  s+=R(12,326,4,64,2,'#7719AA','#7719AA');
+  s+=T(398,349,'👥  Builder Profile  ·  🤖  Agent Type',14,600,'#242424');
+  s+=T(398,366,'Who builds and what type determines the path forward',11.5,400,'#616161');
+
+  /* ── THREE-WAY SPLIT ────────────────────────────────────────────────── */
+  const colHeaderY=426, col1cx=164, col2cx=520, col3cx=876;
+
+  s+=P('M 398 390 L 398 408 L '+col1cx+' 408 L '+col1cx+' '+colHeaderY,'#7719AA','','ap',1.5);
+  s+=P('M 398 390 L 398 408 L '+col2cx+' 408 L '+col2cx+' '+colHeaderY,'#9E9E9E','','ag',1.5);
+  s+=P('M 398 390 L 398 408 L '+col3cx+' 408 L '+col3cx+' '+colHeaderY,'#0078D4','','ab',1.5);
+
+  s+=T(col1cx,406,'Citizen dev / Knowledge agent',8.5,600,'#7719AA');
+  s+=T(col2cx,406,'Mixed team',8.5,600,'#9E9E9E');
+  s+=T(col3cx,406,'Pro dev / Autonomous / Complex',8.5,600,'#0078D4');
+
+  // Also: hard gate callout box connects to Foundry col
+  s+=P('M 903 326 L 903 408 L '+col3cx+' 408','#0078D4','3,3','',1.5);
+
+  /* ── THREE PATH COLUMNS ─────────────────────────────────────────────── */
+  const px1=12, px2=366, px3=720, cW=304;
+
+  s+=PathHeader(px1,colHeaderY,cW,'🟣','Copilot Studio Path','#7719AA');
+  s+=PathHeader(px2,colHeaderY,cW,'🔀','Hybrid Architecture','#107C10');
+  s+=PathHeader(px3,colHeaderY,cW,'🔵','Azure AI Foundry Path','#0078D4');
+
+  // Studio nodes
+  let sy=colHeaderY+46;
+  [['🖥️','User Surface','Teams · SharePoint · M365 Copilot · Power Apps','#7719AA'],
+   ['🗄️','Data & Knowledge','SharePoint · Dataverse · M365 · standard connectors','#7719AA'],
+   ['⚙️','Agent Capabilities','Conversational flows · topics · generative orchestration','#7719AA'],
+   ['📈','Scale & RAG','Bounded scope · standard grounding · built-in analytics','#7719AA'],
+  ].forEach(([ic,ti,su,bc],i,arr)=>{
+    s+=PathNode(px1,sy,cW,bc,ic,ti,su);
+    if(i<arr.length-1)s+=L(px1+cW/2,sy+52,px1+cW/2,sy+60,'#C2C2C2','','',1);
+    sy+=60;
+  });
+
+  // Hybrid content box
+  const hcx=px2+cW/2;
+  s+=R(px2,colHeaderY+46,cW,224,6,'#F4FBF4','#81D481',1.5);
+  s+=T(hcx,colHeaderY+80,'Copilot Studio',13,700,'#7719AA');
+  s+=T(hcx,colHeaderY+97,'Front-end (M365 surfaces)',10,400,'#424242');
+  s+=L(hcx,colHeaderY+104,hcx,colHeaderY+130,'#107C10','5,3','',1.5);
+  s+=T(hcx,colHeaderY+143,'↕  API or MCP connector',9,600,'#9E9E9E');
+  s+=L(hcx,colHeaderY+150,hcx,colHeaderY+174,'#107C10','5,3','',1.5);
+  s+=T(hcx,colHeaderY+188,'Azure AI Foundry',13,700,'#0078D4');
+  s+=T(hcx,colHeaderY+205,'AI backbone · models · RAG · eval',10,400,'#424242');
+  s+=L(px2+20,colHeaderY+218,px2+cW-20,colHeaderY+218,'#D0E8D0','','',1);
+  s+=T(hcx,colHeaderY+232,'Best for: M365 users + advanced AI',9,400,'#616161');
+  s+=T(hcx,colHeaderY+248,'Mixed citizen dev + pro dev teams',9,400,'#616161');
+
+  // Foundry nodes
+  let fy=colHeaderY+46;
+  [['🔒','Governance & Security','VNet · RBAC · Key Vault · private endpoints','#0078D4'],
+   ['🗄️','Data & Custom RAG','AI Search · Data Lake · Fabric · custom pipeline','#0078D4'],
+   ['⚙️','Agent Capabilities','Custom loop · memory · MCP · code execution','#0078D4'],
+   ['🧠','Model & Autonomy','Full lifecycle · routing · reasoning · multi-agent','#0078D4'],
+  ].forEach(([ic,ti,su,bc],i,arr)=>{
+    s+=PathNode(px3,fy,cW,bc,ic,ti,su);
+    if(i<arr.length-1)s+=L(px3+cW/2,fy+52,px3+cW/2,fy+60,'#C2C2C2','','',1);
+    fy+=60;
+  });
+
+  /* ── OUTCOMES ────────────────────────────────────────────────────────── */
+  const oY=sy+20;
+  s+=L(px1+cW/2,sy,px1+cW/2,oY,'#7719AA','4,3','ap',1.5);
+  s+=L(hcx,colHeaderY+272,hcx,oY,'#107C10','4,3','ah',1.5);
+  s+=L(px3+cW/2,fy,px3+cW/2,oY,'#0078D4','4,3','ab',1.5);
+
+  s+=OutcomeBox(px1,oY,cW,'🟣','Copilot Studio','Graphical builder · M365 ecosystem','#7719AA');
+  s+=OutcomeBox(px2,oY,cW,'🔀','Hybrid Architecture','Studio front-end + Foundry backend','#107C10');
+  s+=OutcomeBox(px3,oY,cW,'🔵','Azure AI Foundry','Code-first · full engineering control','#0078D4');
+
+  /* ── LEGEND ─────────────────────────────────────────────────────────── */
+  const legY=oY+70;
+  s+=R(12,legY,1036,46,6,'#F5F5F5','#E0E0E0',1);
+  s+=T(30,legY+18,'LEGEND:',9,700,'#9E9E9E','start');
+  [['#C50F1F','Hard gate exit (immediate)'],['#0078D4','Azure AI Foundry signal'],
+   ['#7719AA','Copilot Studio signal'],['#107C10','Hybrid architecture'],['#9E9E9E','Continue evaluating']
+  ].forEach(([col,lbl],i)=>{
+    const lx=90+i*190;
+    s+=R(lx,legY+11,14,14,3,col,col);
+    s+=T(lx+20,legY+23,lbl,9.5,400,'#616161','start');
+  });
+
+  svg.innerHTML=s;
+  svg.setAttribute('viewBox','0 0 1060 '+(legY+60));
+}
+
+
+
+// ── PLATFORM OVERVIEW + LAYER MAP ────────────────────────────────────────────
+const PLATFORM_DIMS=[
+  {d:'Primary audience',cs:'Business users, makers, fusion teams, Power Platform developers',af:'AI engineers, app developers, platform teams'},
+  {d:'Build style',cs:'Graphical, visual builder experience',af:'Code-first — SDK, API, portal'},
+  {d:'Main strength',cs:'Fast business agents inside Microsoft 365, Teams, websites, and Power Platform',af:'Full control over models, orchestration, runtime, evaluations, observability, and deployment'},
+  {d:'Runtime',cs:'Managed SaaS through Copilot Studio / Power Platform',af:'Azure PaaS through Azure AI Foundry'},
+  {d:'Model control',cs:'Built-in managed models; individual prompt tools (prompt nodes) can connect to a Foundry model deployment — prompt-level only, not orchestration-level',af:'Direct access to Foundry model catalog, deployments, inference APIs, routing, reasoning effort, and fine-tuning patterns'},
+  {d:'Orchestration',cs:'Topics, generative orchestration, agent flows, Power Automate-style workflows',af:'Agent Framework, LangGraph, AutoGen, OpenAI Agents SDK, Semantic Kernel, Anthropic SDK, custom code, hosted agents'},
+  {d:'Tools / actions',cs:'Power Platform connectors, custom connectors, flows, prompts, agents',af:'Built-in tools, custom tools, MCP, REST APIs, code-based tools, retrieval, hosted agent logic'},
+  {d:'Knowledge',cs:'SharePoint, Dataverse, files, websites, connectors, M365 / business data',af:'Azure AI Search, Foundry IQ, vector stores, files, custom RAG, BYO storage / search'},
+  {d:'Observability',cs:'Maker / admin analytics, testing, conversation insights',af:'Tracing, evaluations, monitoring, OpenTelemetry, Application Insights / Azure Monitor — production-grade'},
+  {d:'Governance',cs:'Power Platform environments, DLP policies, connector controls, tenant settings',af:'Azure RBAC, managed identity, private endpoints / VNet, policies, quotas'},
+  {d:'Distribution',cs:'Teams, M365 Copilot, SharePoint, web, Power Pages, channels',af:'Stable REST endpoint, API invocation, Teams / M365 publishing, custom apps, A2A (agent-to-agent) scenarios'},
+  {d:'Best use case',cs:'Business-process agents — fast, M365-integrated, graphical builder experience',af:'Complex AI apps, advanced agents, custom orchestration, production-grade AI systems'},
+];
+
+const LAYER_MAP=[
+  {l:'Business user interface',p:'Copilot Studio',t:'cs'},
+  {l:'Agent experience builder',p:'Copilot Studio',t:'cs'},
+  {l:'Workflow and connector layer',p:'Copilot Studio + Power Platform',t:'cs'},
+  {l:'Advanced AI runtime',p:'Azure AI Foundry',t:'af'},
+  {l:'Model engineering layer',p:'Azure AI Foundry',t:'af'},
+  {l:'Evaluation and observability layer',p:'Azure AI Foundry',t:'af'},
+  {l:'Custom pro-code orchestration',p:'Foundry + Agent Framework / LangGraph / AutoGen',t:'af'},
+  {l:'Enterprise agent control plane',p:'Agent 365 / Microsoft 365 governance layer',t:'m365'},
+];
+
+function buildPlatformOverview(){
+  const body=document.getElementById('overview-body');
+  if(body)body.innerHTML=PLATFORM_DIMS.map(r=>`
+    <tr>
+      <td class="dim-cell">${r.d}</td>
+      <td>${r.cs}</td>
+      <td>${r.af}</td>
+    </tr>`).join('');
+  const lbody=document.getElementById('layer-body');
+  if(lbody)lbody.innerHTML=LAYER_MAP.map((r,i)=>`
+    <tr>
+      <td style="color:var(--muted);font-size:12px">${i+1}. ${r.l}</td>
+      <td><span class="lyr-${r.t}">${r.p}</span></td>
+    </tr>`).join('');
+}
+
+// ── QUICK QUALIFY ─────────────────────────────────────────────────────────────
+const QQ=[
+  {q:'Who owns the IP?',
+   opts:['Microsoft-managed SaaS is fine','Customer must own all IP in their Azure tenant'],
+   scores:[{cs:3,af:0},{cs:0,af:5}]},
+  {q:'Who builds and maintains the agent?',
+   opts:['Citizen devs / Power Platform makers / solution engineers','Professional developers or AI engineers','Mixed team'],
+   scores:[{cs:3,af:0},{cs:0,af:3},{cs:1,af:1}]},
+  {q:'What type of agent?',
+   opts:['Knowledge assistant or Employee Copilot','Customer support or process automation','Autonomous / multi-agent / long-running'],
+   scores:[{cs:3,af:0},{cs:1,af:1},{cs:0,af:4}]},
+];
+let qqAnswers={};
+
+function buildQuickQualify(){
+  const c=document.getElementById('qq-cards');
+  if(!c)return;
+  qqAnswers={};
+  c.innerHTML=QQ.map((q,qi)=>`
+    <div class="q-card" style="padding:18px 20px">
+      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px">${qi+1}. ${q.q}</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${q.opts.map((o,oi)=>`
+          <label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r4);cursor:pointer;font-size:13px;background:var(--card)">
+            <input type="radio" name="qq${qi}" value="${oi}" onchange="qqPick(${qi},${oi})" style="accent-color:var(--cs)">
+            <span>${o}</span>
+          </label>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function qqPick(qi,oi){
+  qqAnswers[qi]=oi;
+  qqShowResult();
+}
+
+function qqShowResult(){
+  let cs=0,af=0;
+  Object.entries(qqAnswers).forEach(([qi,oi])=>{
+    const sc=QQ[qi].scores[oi]||{cs:0,af:0};
+    cs+=sc.cs; af+=sc.af;
+  });
+  const answered=Object.keys(qqAnswers).length;
+  const r=document.getElementById('qq-result');
+  if(!r||answered===0){if(r)r.innerHTML='';return;}
+  const total=cs+af||1;
+  const csPct=Math.round((cs/total)*100);
+  const afPct=100-csPct;
+  let platform,color,icon,note;
+  if(af>=7){platform='Azure AI Foundry';color='var(--af)';icon='🔵';note='Hard signal — strong Foundry fit based on your answers.';}
+  else if(cs>=7){platform='Microsoft Copilot Studio';color='var(--cs)';icon='🟣';note='Clear signal — Copilot Studio is well-suited to this profile.';}
+  else if(af>cs){platform='Lean: Azure AI Foundry';color='var(--af)';icon='🔵';note='Mixed signals — run the full Step-by-Step Guide to confirm.';}
+  else if(cs>af){platform='Lean: Copilot Studio';color='var(--cs)';icon='🟣';note='Mixed signals — run the full Step-by-Step Guide to confirm.';}
+  else{platform='Balanced';color='var(--hy)';icon='🔀';note='Too close to call — use the Step-by-Step Guide for a definitive answer.';}
+  r.innerHTML=`
+    <div class="result-card" style="border-left:5px solid ${color};padding:20px 22px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <span style="font-size:28px">${icon}</span>
+        <div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--faint)">Quick Qualify Result</div>
+          <div style="font-size:20px;font-weight:700;color:${color}">${platform}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:0;height:12px;border-radius:6px;overflow:hidden;margin-bottom:8px">
+        <div style="width:${csPct}%;background:var(--cs)"></div>
+        <div style="width:${afPct}%;background:var(--af)"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:600;margin-bottom:12px">
+        <span style="color:var(--cs)">🟣 Copilot Studio (${csPct}%)</span>
+        <span style="color:var(--af)">Azure AI Foundry (${afPct}%) 🔵</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px">${note}</div>
+      ${answered<3?'<div style="font-size:11px;font-weight:600;color:var(--warn-orange)">⚠️ Answer all 3 questions for a complete signal.</div>':''}
+      <button class="btn btn-primary-cs" onclick="switchTab('guide');setTimeout(()=>render('q_ip'),80)" style="margin-top:12px">
+        Run full qualification →
+      </button>
+    </div>`;
+}
+
+
+window.addEventListener('DOMContentLoaded',()=>{render('q_ip');buildOverview();buildDiagram();buildQuickQualify();buildPlatformOverview();});
+</script>
+</body>
+</html>
